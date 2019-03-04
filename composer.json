@@ -1,0 +1,25 @@
+{
+	"name": "strukt/crypt",
+    "description": "Cryptography",
+    "license": "MIT",
+    "authors": [
+        
+        {
+            "name": "Moderator",
+            "email": "pitsolu@gmail.com"
+        }
+    ],
+    "require": {
+
+    	"php": ">=7.0",
+        "ext-openssl": "*",
+		"strukt/commons": "dev-master"
+    },
+    "autoload": {
+        
+        "psr-0": {
+
+            "Crypt\\": "src/"
+        }
+    }
+}
