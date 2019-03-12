@@ -30,4 +30,11 @@ class Cipher{
 
 		return $encrypted;
 	}
+
+	public static function encryptWith(PublicKey $pubKey, $data){
+
+		openssl_public_encrypt($data, $encrypted, $pubKey->getPem());
+
+		return $encrypted;
+	}
 }

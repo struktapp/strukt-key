@@ -38,17 +38,16 @@ $hash = Strukt\Hash\Sha::dbl256('p@55w0rd');
 ### Generate Keys
 
 ```php
-
-$keys = new Strukt\Ssl\KeyPairBuilder(new Strukt\Ssl\Config());
-$pubKey = $keys->getPublicKey();// Strukt\Ssl\PublicKey
-$privKey = $keys->getPrivateKey();// Strukt\Ssl\PrivateKey
-
 $file = "file:///home/churchill/.ssh/id_rsa"
 // $keys = new Strukt\Ssl\KeyPair($file, "p@55w0rd");
-$keyBuilder = new Strukt\Ssl\KeyPair($file);
+$keys = new Strukt\Ssl\KeyPair($file);
 $pubKey = $keys->getPublicKey();// Strukt\Ssl\PublicKey
 $privKey = $keys->getPrivateKey();// Strukt\Ssl\PrivateKey
 
+
+$builder = new Strukt\Ssl\KeyPairBuilder(new Strukt\Ssl\Config());
+$pubKey = $builder->getPublicKey();// Strukt\Ssl\PublicKey
+$privKey = $builder->getPrivateKey();// Strukt\Ssl\PrivateKey
 ```
 
 ### Encryp & Decrypt
@@ -63,7 +62,10 @@ My name is (what?)
 My name is
 Slim Shady";
 
-$c = new Strukt\Ssl\Cipher($keys);
-$enc = $c->encrypt($message);
-$dec = $c->decrypt($encrypted);
+$encrypted = Strukt\Ssl\Cipher::encryptWith($builder->getPublicKey(), $this->message);
+
+$c = new Strukt\Ssl\Cipher($builder);
+$decrypted = $c->decrypt($encrypted);
+
+$builder->freeKey();
 ```
