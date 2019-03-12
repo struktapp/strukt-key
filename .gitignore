@@ -5,3 +5,5 @@ php_errors.log
 fixture/
 fixture.zip
 composer.lock
+test2.php
+.composer*

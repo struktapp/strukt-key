@@ -1,6 +1,22 @@
 Crypt
 =====
 
+## Installation
+
+### Composer
+
+Create `composer.json` script with contents below then run `composer update`
+
+```js
+{
+    "require":{
+
+        "strukt/crypt":"dev-master"
+    },
+    "minimum-stability":"dev"
+}
+```
+
 ## Hashing
 
 ### Bcrypt

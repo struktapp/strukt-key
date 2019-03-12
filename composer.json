@@ -13,13 +13,14 @@
 
     	"php": ">=7.0",
         "ext-openssl": "*",
-		"strukt/commons": "dev-master"
+		"strukt/commons": "dev-master",
+		"symfony/http-foundation": "^4.2"
     },
     "autoload": {
         
         "psr-0": {
 
-            "Crypt\\": "src/"
+            "Strukt\\": "src/"
         }
     }
 }

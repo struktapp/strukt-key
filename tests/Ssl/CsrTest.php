@@ -21,7 +21,7 @@ class CsrTest extends TestCase{
 		$this->csr = new Csr($distgName, $this->builder, $conf);
 	}
 
-	public function testSelfSigning(){
+	public function testSelfSigningAndVerification(){
 
 		$this->csr->signOwn();
 
@@ -29,5 +29,7 @@ class CsrTest extends TestCase{
 		$privKey = $this->builder->getPrivateKey()->getPem();
 
 		$this->assertTrue(openssl_x509_check_private_key($cert, $privKey));
+
+		// print_r(openssl_x509_parse($cert));
 	}
 }
