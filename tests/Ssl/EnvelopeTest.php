@@ -16,7 +16,19 @@ class EnvelopeTest extends TestCase{
 		$this->envelope = new Envelope($this->builder);
 	}
 
-	public function testEnvelopes(){
+	public function testSingleSealUnseal(){
+
+		$pubKey = $this->builder->getPublicKey();
+
+		$msg = "You better lose yourself in the music, the moment 
+				You own it, you better never let it go";
+
+		list($key, $sealed) = Envelope::closeWith($pubKey, $msg);
+
+		$this->assertEquals($msg, $this->envelope->open($key, $sealed));
+	}
+
+	public function testSealUnsealMany(){
 
 		$msg = "Shit is sublime. The combinnation of alliteration and internal rhymes.";
 
@@ -27,7 +39,7 @@ class EnvelopeTest extends TestCase{
 			$builders[] = $builder;
 		}
 
-		list($keys, $sealed) = Envelope::closeForAll($msg, new PublicKeyList($pubKeys));
+		list($keys, $sealed) = Envelope::closeAllWith(new PublicKeyList($pubKeys), $msg);
 
 		foreach(range(0,2) as $idx){
 

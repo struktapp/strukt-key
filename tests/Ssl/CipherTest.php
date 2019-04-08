@@ -1,6 +1,9 @@
 <?php
 
-use Strukt\Ssl\{KeyPair, KeyPairBuilder, Cipher};
+use Strukt\Ssl\KeyPair;
+use Strukt\Ssl\KeyPairBuilder;
+use Strukt\Ssl\Cipher;
+
 use PHPUnit\Framework\TestCase;
 
 class CipherTest extends TestCase{
@@ -19,8 +22,6 @@ class CipherTest extends TestCase{
 		$c = new Cipher($builder);
 		$decrypted = $c->decrypt($encrypted);
 
-		$builder->freeKey();
-
 		$this->assertEquals($this->message, $decrypted);
 	}
 
@@ -36,8 +37,6 @@ class CipherTest extends TestCase{
 		$encrypted = $c->encrypt($this->message);
 		$decrypted = $c->decrypt($encrypted);
 
-		$keys->freeKey();
-
 		$this->assertEquals($this->message, $decrypted);
 	}
 
@@ -52,8 +51,6 @@ class CipherTest extends TestCase{
 		$c = new Cipher($keys);
 		$encrypted = $c->encrypt($this->message);
 		$decrypted = $c->decrypt($encrypted);
-
-		$keys->freeKey();
 
 		$this->assertEquals($this->message, $decrypted);
 	}

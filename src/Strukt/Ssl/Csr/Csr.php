@@ -26,6 +26,7 @@ namespace Strukt\Ssl\Csr;
 
 use Strukt\Ssl\Config;
 use Strukt\Ssl\KeyPairContract;
+use Strukt\Ssl\PrivateKey;
 
 class Csr{
 
@@ -61,11 +62,11 @@ class Csr{
 		$this->cert = openssl_csr_sign($this->csr, null, $privKeyRes, $days, $this->confList);
 	}
 
-	public function sign($csrData, $caCert, KeyPairContract $keys, $days=365){
+	public function sign($csr, $cert, $days=365){
 
-		$privKeyRes = $keys->getPrivateKey()->getResource();
+		$privKeyRes = $this->keys->getPrivateKey()->getResource();
 
-		$this->cert = openssl_csr_sign($csrData, $caCert, $privKeyRes, $days, $this->confList);
+		$this->cert = openssl_csr_sign($csr, $cert, $privKeyRes, $days, $this->confList);
 	}
 
 	public function getCsr(){
@@ -87,5 +88,35 @@ class Csr{
 		$subject = openssl_csr_get_subject($this->csr);
 
 		return $subject;
+	}
+
+	public function parse(){
+
+		return self::parseCert($this->cert);
+	}
+
+	public function verify(){
+
+		$privKey = $this->builder->getPrivateKey();
+
+		$isOkay = self::verifyCert($privKey, $this->cert);
+
+		return $isOkay;
+	}
+
+	public static function parseCert($cert){
+
+		$cert = openssl_x509_parse($cert);
+
+		return $cert;
+	}
+
+	public static function verifyCert(PrivateKey $privKey, $cert){
+
+		$privKey = $privKey->getPem();
+
+		$isOkay = openssl_x509_check_private_key($cert, $privKey);
+
+		return $isOkay;
 	}
 }

@@ -15,8 +15,6 @@ class Envelope{
 
 		openssl_open($sealed, $open, $envKey, $privKeyRes);
 
-		$this->keys->freeKey();
-
 		return $open;
 	}
 
@@ -24,20 +22,27 @@ class Envelope{
 
 		$pubKey = $this->keys->getPublicKey()->getPem();
 
-		openssl_seal($data, $sealed, $envKey, array($pubKey));
+		openssl_seal($data, $sealed, $envKeys, array($pubKey));
 
-		$this->keys->freeKey();
+		return array($envKeys, $sealed);
+	}
+
+	public static function closeWith(PublicKey $pubKey, $data){
+
+		$pubKey = $pubKey->getPem();
+
+		openssl_seal($data, $sealed, $envKeys, array($pubKey));
+
+		$envKey = current($envKeys);
 
 		return array($envKey, $sealed);
 	}
 
-	public static function closeForAll($data, PublicKeyList $pubKeyList){
+	public static function closeAllWith(PublicKeyList $pubKeyList, $data){
 
 		$pubKeys = $pubKeyList->getKeys();
 
 		openssl_seal($data, $sealed, $envKeys, $pubKeys);
-
-		$pubKeyList->freeAll();
 
 		return array($envKeys, $sealed);
 	}

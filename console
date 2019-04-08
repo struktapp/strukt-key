@@ -1,0 +1,12 @@
+#!/usr/bin/php
+<?php
+
+require("bootstrap.php");
+
+$app = new Strukt\Console\Application("Strukt Ssl");
+$app->add(new Strukt\Ssl\Command\KeyPairGenerate);
+$app->add(new Strukt\Ssl\Command\Encrypt);
+$app->add(new Strukt\Ssl\Command\Decrypt);
+// $app->add(new Strukt\Ssl\Command\Certificate);
+$app->add(new Strukt\Hash\Command\Sha);
+exit($app->run($_SERVER["argv"]));

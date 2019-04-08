@@ -13,23 +13,43 @@ class CsrTest extends TestCase{
 	public function setUp(){
 
 		$distgName = new UniqueName(["common"=>"test"]);
-
 		$conf = new Config();
 
 		$this->builder = new KeyPairBuilder($conf);
-
-		$this->csr = new Csr($distgName, $this->builder, $conf);
+		$this->request = new Csr($distgName, $this->builder, $conf);
 	}
 
 	public function testSelfSigningAndVerification(){
 
-		$this->csr->signOwn();
+		$this->request->signOwn();
 
-		$cert = $this->csr->getCert();
-		$privKey = $this->builder->getPrivateKey()->getPem();
+		$crt = $this->request->getCert();
+		$csr = $this->request->getCsr();
+		$privKey = $this->builder->getPrivateKey();
 
-		$this->assertTrue(openssl_x509_check_private_key($cert, $privKey));
+		$this->assertTrue(Csr::verifyCert($privKey, $crt));
 
-		// print_r(openssl_x509_parse($cert));
+		// return array($csr, $crt);
 	}
+
+	/**
+	// @depends testSelfSigningAndVerification
+	*/
+	// public function testSigningAndVerification($csr, $crt){
+
+	// 	$this->markTestSkipped('There is a problem here and no one knows why!');
+
+	// 	$distgName = new UniqueName(["common"=>"test"]);
+	// 	$conf = new Config();
+	// 	$builder = new KeyPairBuilder($conf);
+	// 	$req = new Csr($distgName, $builder, $conf);
+
+	// 	$req->sign($csr, $crt);
+
+	// 	$cert = $req->getCert();
+
+	// 	$privKey = $builder->getPrivateKey();
+
+	// 	$this->assertTrue(Csr::verifyCert($privKey, $cert));
+	// }
 }
