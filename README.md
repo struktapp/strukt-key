@@ -11,7 +11,7 @@ Create `composer.json` script with contents below then run `composer update`
 {
     "require":{
 
-        "strukt/crypt":"dev-master"
+        "strukt/key":"dev-master"
     },
     "minimum-stability":"dev"
 }
