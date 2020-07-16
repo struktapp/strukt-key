@@ -88,14 +88,18 @@ class Bcrypt{
     public function makeSalt(){
 
         // openssl_random_pseudo_bytes(16) Fallback
-        $seed = '';
+        $seed = Str::create('');
         for($i = 0; $i < 16; $i++)
-            $seed .= chr(mt_rand(0, 255));
+            $seed = $seed->concat(chr(mt_rand(0, 255)));
 
         // get salt
-        $salt = substr(strtr(base64_encode($seed), '+', '.'), 0, 22);
+        $salt = Str::create(base64_encode((string)$seed))
+          ->part(0,22)
+          ->replace('+','.');
 
-        return $salt;
+        // $salt = substr(strtr(base64_encode((string)$seed), '+', '.'), 0, 22);
+
+        return (string)$salt;
     }
 
     public function makeHash($password){
@@ -104,9 +108,7 @@ class Bcrypt{
         // 2a selects bcrypt algorithm
         // $this->rounds is the workload factor
 
-        $salt = new Str('$2y$');
-
-        $salt = $salt->concat($this->rounds)->concat('$')->concat($this->makeSalt());
+        $salt = Str::create('$2y$')->concat($this->rounds)->concat('$')->concat($this->makeSalt());
 
         $hash = crypt($password, (string)$salt);
         

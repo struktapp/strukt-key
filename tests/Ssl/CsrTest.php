@@ -10,12 +10,12 @@ use PHPUnit\Framework\TestCase;
 
 class CsrTest extends TestCase{
 
-	public function setUp(){
+	public function setUp():void{
 
 		$distgName = new UniqueName(["common"=>"test"]);
 		$conf = new Config();
 
-		$this->builder = new KeyPairBuilder($conf);
+		$this->builder = new KeyPairBuilder($conf); 
 		$this->request = new Csr($distgName, $this->builder, $conf);
 	}
 

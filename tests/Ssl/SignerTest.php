@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class SignerTest extends TestCase{
 
-	public function setUp(){
+	public function setUp():void{
 
 		$this->builder = new KeyPairBuilder(new Config());
 

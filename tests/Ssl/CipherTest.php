@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class CipherTest extends TestCase{
 
-	public function setUp(){
+	public function setUp():void{
 
 		$this->message = "Hi, my is what? My is who? My name is (Tski tski) Slim Shady!";
 	}
