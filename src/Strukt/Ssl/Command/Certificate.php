@@ -17,8 +17,8 @@ use Strukt\Console\Output;
 *      url         Url e.g google.com
 *      val         Value
 *
-*					issuer, domain, subject, algo, from, 
-*					to, selfsigned, expired, fingerprint
+*                  issuer, domain, subject, algo, from, 
+*                  to, selfsigned, expired, fingerprint, all
 */
 class Certificate extends \Strukt\Console\Command{ 
 

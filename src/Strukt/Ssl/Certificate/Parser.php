@@ -2,7 +2,7 @@
 
 namespace Strukt\Ssl\Certificate;
 
-use Strukt\Builder\CollectionBuilder;
+use Strukt\Builder\Collection as CollectionBuilder;
 
 class Parser{
 

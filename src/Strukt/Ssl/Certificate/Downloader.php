@@ -2,7 +2,7 @@
 
 namespace Strukt\Ssl\Certificate;
 
-use Strukt\Util\Str;
+use Strukt\Type\Str;
 
 class Downloader{
 
