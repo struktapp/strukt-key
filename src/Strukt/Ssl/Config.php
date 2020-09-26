@@ -2,13 +2,28 @@
 
 namespace Strukt\Ssl;
 
+use Strukt\Fs;
+use Strukt\Raise;
+
 class Config{
 
 	private $config = array();
 
 	public function __construct(Array $config = []){
 
-		$config = array(
+		$this->config = static::dump();
+		if(Fs::isFile("ssl.cfg.ini"))
+			$this->config = parse_ini_file("ssl.cfg.ini");
+
+		if(!Fs::isFile($this->config["config"]))
+			new Raise(sprintf("Unable to find [%s] file!", $this->config["config"]));
+
+		$this->config = array_merge($this->config, $config);
+	}
+
+	public static function dump(){
+
+		return array(
 
 		 	"config" => "fixture/openssl.cnf", 
 		 	"digest_alg" => "sha256", 
@@ -18,8 +33,6 @@ class Config{
 		 	"private_key_type" => OPENSSL_KEYTYPE_RSA, 
 		 	"encrypte_key" => true
 		 );
-
-		$this->config = array_merge($this->config, $config);
 	}
 
 	public function getAll(){
