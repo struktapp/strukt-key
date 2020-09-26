@@ -15,7 +15,8 @@
         "ext-openssl": "*",
 		"strukt/commons": "dev-master",
 		"symfony/http-foundation": "^4.2",
-		"strukt/console": "^1.0"
+		"strukt/console": "^1.0",
+        "strukt/fs": "dev-master"
     },
     "autoload": {
         
@@ -23,5 +24,6 @@
 
             "Strukt\\": "src/"
         }
-    }
+    },
+    "bin":["console"]
 }

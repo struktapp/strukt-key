@@ -14,7 +14,7 @@ use Strukt\Console\Output;
 *
 * Arguments:
 *
-*      type    Algo type either dbl, once   
+*      type    Algo type either (dbl, once)
 *      value   Value to hash
 */
 class Sha extends \Strukt\Console\Command{ 

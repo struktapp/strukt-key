@@ -6,3 +6,4 @@ fixture.zip
 composer.lock
 test2.php
 .composer*
+.phpunit.result.cache
