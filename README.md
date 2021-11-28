@@ -62,10 +62,10 @@ My name is (what?)
 My name is
 Slim Shady";
 
-$encrypted = Strukt\Ssl\Cipher::encryptWith($builder->getPublicKey(), $this->message);
+$encrypted = Strukt\Ssl\Cipher::encryptWith($builder->getPublicKey(), $message);
 
-$c = new Strukt\Ssl\Cipher($builder);
-$decrypted = $c->decrypt($encrypted);
+$cipher = new Strukt\Ssl\Cipher($builder);
+$decrypted = $cipher->decrypt($encrypted);
 
 $builder->freeKey();
 ```
@@ -89,7 +89,5 @@ $privKey = $keyBuilder->getPrivateKey(); //Strukt\Ssl\PrivateKey
 
 $cert = $privKey->getSelfSignedCert($request); //string
 
-$request->setCert($cert);
-
-Strukt\Ssl\Csr\Csr::verifyCert($privKey, $cert));//boolean
+Strukt\Ssl\Csr\Csr::verifyCert($privKey, $cert);//boolean
 ```

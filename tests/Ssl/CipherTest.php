@@ -19,8 +19,8 @@ class CipherTest extends TestCase{
 
 		$encrypted = Cipher::encryptWith($builder->getPublicKey(), $this->message);
 
-		$c = new Cipher($builder);
-		$decrypted = $c->decrypt($encrypted);
+		$cipher = new Cipher($builder);
+		$decrypted = $cipher->decrypt($encrypted);
 
 		$this->assertEquals($this->message, $decrypted);
 	}
@@ -48,9 +48,9 @@ class CipherTest extends TestCase{
 
 		$keys = new KeyPair($path, "p@55w0rd");
 
-		$c = new Cipher($keys);
-		$encrypted = $c->encrypt($this->message);
-		$decrypted = $c->decrypt($encrypted);
+		$cipher = new Cipher($keys);
+		$encrypted = $cipher->encrypt($this->message);
+		$decrypted = $cipher->decrypt($encrypted);
 
 		$this->assertEquals($this->message, $decrypted);
 	}

@@ -11,7 +11,8 @@ trait ErrorHandler{
             $message[] = $msg;
         
         if(!empty($message))
-        	throw new \Exception(implode(', ', $message));
+        	// throw new \Exception(implode(', ', $message));
+            print_r($message);
     }
 
     public static function clearErrors(){

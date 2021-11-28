@@ -42,19 +42,16 @@ class CsrTest extends TestCase{
 
 		// $this->markTestSkipped('There is a problem here and no one knows why!');
 
+		$request = $this->csrBuilder->getCsr();
+		$request->setCert(sprintf("file://%s/fixture/cacert.pem", getcwd()));
+
 		$otherKeyBuilder = new KeyPairBuilder(new Config());
-		// $otherKeyBuilder = new KeyPairBuilder();
 		$privKey = $otherKeyBuilder->getPrivateKey();
 
 		$cert = Csr::sign($request, $privKey);
 
-		print_r($cert);
-		print_r(openssl_error_string());
-
-		// $this->assertFalse(Csr::verifyCert($privKey, $request->getCert()));
 		$this->assertTrue(Csr::verifyCert($privKey, $cert));
 
-		// Show any errors that occurred here
-		print_r(openssl_error_string());
+		Strukt\Ssl\ErrorHandler::getErrors();
 	}
 }
