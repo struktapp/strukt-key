@@ -2,6 +2,7 @@
 
 use Strukt\Ssl\KeyPair;
 use Strukt\Ssl\KeyPairBuilder;
+use Strukt\Ssl\Csr\CsrBuilder;
 use Strukt\Ssl\Csr\Csr;
 use Strukt\Ssl\Csr\UniqueName;
 use Strukt\Ssl\Config;
@@ -15,41 +16,45 @@ class CsrTest extends TestCase{
 		$distgName = new UniqueName(["common"=>"test"]);
 		$conf = new Config();
 
-		$this->builder = new KeyPairBuilder($conf); 
-		$this->request = new Csr($distgName, $this->builder, $conf);
+		$this->keyBuilder = new KeyPairBuilder($conf); 
+		$this->csrBuilder = new CsrBuilder($distgName, $this->keyBuilder, $conf);
 	}
 
-	public function testSelfSigningAndVerification(){
+	public function testSelfSigningAndVerification():Csr{
 
-		$this->request->signOwn();
+		$request = $this->csrBuilder->getCsr();
 
-		$crt = $this->request->getCert();
-		$csr = $this->request->getCsr();
-		$privKey = $this->builder->getPrivateKey();
+		$privKey = $this->keyBuilder->getPrivateKey();
 
-		$this->assertTrue(Csr::verifyCert($privKey, $crt));
+		$cert = $privKey->getSelfSignedCert($request);
 
-		// return array($csr, $crt);
+		$request->setCert($cert);
+
+		$this->assertTrue(Csr::verifyCert($privKey, $cert));
+
+		return $request;
 	}
 
 	/**
-	// @depends testSelfSigningAndVerification
+	* @depends testSelfSigningAndVerification
 	*/
-	// public function testSigningAndVerification($csr, $crt){
+	public function testSigningAndVerification(Csr $request){
 
-	// 	$this->markTestSkipped('There is a problem here and no one knows why!');
+		// $this->markTestSkipped('There is a problem here and no one knows why!');
 
-	// 	$distgName = new UniqueName(["common"=>"test"]);
-	// 	$conf = new Config();
-	// 	$builder = new KeyPairBuilder($conf);
-	// 	$req = new Csr($distgName, $builder, $conf);
+		$otherKeyBuilder = new KeyPairBuilder(new Config());
+		// $otherKeyBuilder = new KeyPairBuilder();
+		$privKey = $otherKeyBuilder->getPrivateKey();
 
-	// 	$req->sign($csr, $crt);
+		$cert = Csr::sign($request, $privKey);
 
-	// 	$cert = $req->getCert();
+		print_r($cert);
+		print_r(openssl_error_string());
 
-	// 	$privKey = $builder->getPrivateKey();
+		// $this->assertFalse(Csr::verifyCert($privKey, $request->getCert()));
+		$this->assertTrue(Csr::verifyCert($privKey, $cert));
 
-	// 	$this->assertTrue(Csr::verifyCert($privKey, $cert));
-	// }
+		// Show any errors that occurred here
+		print_r(openssl_error_string());
+	}
 }

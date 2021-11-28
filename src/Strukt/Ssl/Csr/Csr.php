@@ -24,63 +24,39 @@
 */
 namespace Strukt\Ssl\Csr;
 
-use Strukt\Ssl\Config;
-use Strukt\Ssl\KeyPairContract;
 use Strukt\Ssl\PrivateKey;
 
 class Csr{
 
-	private $distgName;
-	private $keys;
 	private $csr;
 	private $cert;
-	private $confList = null;
 
-	public function __construct(UniqueName $unique, KeyPairContract $keys, Config $conf = null){
+	public function __construct($csr = null, $cert = null){
 
-		$this->distgName = $unique->getDetails();
-		if(empty($this->distgName))
-			throw new \Exception("Distinguishing Name is empty!");
-
-		$this->keys = $keys;
-
-		$privKeyRes = $keys->getPrivateKey()->getResource();
-
-		if(is_null($conf))
-			$conf = new Config();
-		
-		$this->confList = $conf->getAll();
-
-		$this->csr = openssl_csr_new($this->distgName, $privKeyRes, $this->confList);
-	}
-
-	//self signed
-	public function signOwn($days=365){
-
-		$privKeyRes = $this->keys->getPrivateKey()->getResource();
-
-		$this->cert = openssl_csr_sign($this->csr, null, $privKeyRes, $days, $this->confList);
-	}
-
-	public function sign($csr, $cert, $days=365){
-
-		$privKeyRes = $this->keys->getPrivateKey()->getResource();
-
-		$this->cert = openssl_csr_sign($csr, $cert, $privKeyRes, $days, $this->confList);
+		$this->setCsr($csr);
+		$this->setCert($cert);
 	}
 
 	public function getCsr(){
 
-		openssl_csr_export($this->csr, $csr);
+		return $this->csr;
+	}
 
-		return $csr;
+	public function setCsr($csr){
+
+		if(!is_null($csr))
+			openssl_csr_export($csr, $this->csr);
 	}
 
 	public function getCert(){
 
-		openssl_x509_export($this->cert, $cert);
+		return $this->cert;
+	}
 
-		return $cert;
+	public function setCert($cert){
+
+		if(!is_null($cert))
+			openssl_x509_export($cert, $this->cert);
 	}
 
 	public function getSubject(){
@@ -95,13 +71,9 @@ class Csr{
 		return self::parseCert($this->cert);
 	}
 
-	public function verify(){
+	public function verifyWith(PrivateKey $privKey):boolean{
 
-		$privKey = $this->builder->getPrivateKey();
-
-		$isOkay = self::verifyCert($privKey, $this->cert);
-
-		return $isOkay;
+		return self::verifyCert($privKey, $this->cert);
 	}
 
 	public static function parseCert($cert){
@@ -115,8 +87,34 @@ class Csr{
 
 		$privKey = $privKey->getPem();
 
-		$isOkay = openssl_x509_check_private_key($cert, $privKey);
+		return openssl_x509_check_private_key($cert, $privKey);
+	}
 
-		return $isOkay;
+	public static function sign(Csr $request, PrivateKey $privKey, array $settings = null){
+
+		$privKeyRes = $privKey->getResource();
+
+		$csr = $request->getCsr();
+		$cert = $request->getCert();
+
+		$days = 365;
+		$serial = 0;
+
+		$options = null;
+		if(!is_null($privKey->getConf()))
+			$options = $privKey->getConf()->getAll();
+
+		if(!empty($settings)){
+
+			if(array_key_exists("days", $settings))
+				$days = $settings["days"];
+
+			if(array_key_exists("serial_no", $settings))
+				$serial = $settings["serial_no"];
+		}
+
+		$usercert = openssl_csr_sign($csr, $cert, $privKeyRes, $days, $options, $serial);
+
+		return $usercert;
 	}
 }

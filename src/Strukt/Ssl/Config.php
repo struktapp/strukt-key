@@ -25,7 +25,7 @@ class Config{
 
 		return array(
 
-		 	"config" => "fixture/openssl.cnf", 
+		 	"config" => "fixture/openssl4.cnf", 
 		 	"digest_alg" => "sha256", 
 		 	"x509_extensions" => "v3_ca", 
 		 	"req_extensions" => "v3_req", 

@@ -69,3 +69,33 @@ $decrypted = $c->decrypt($encrypted);
 
 $builder->freeKey();
 ```
+
+### Certificate Signing Request (CSR)
+
+## Self Signed CSR
+
+Generate or get a self signed certificate
+
+```php
+use Strukt\Ssl\KeyPairBuilder;
+use Strukt\Ssl\Csr\CsrBuilder;
+use Strukt\Ssl\Csr\Csr;
+use Strukt\Ssl\Csr\UniqueName;
+use Strukt\Ssl\Config;
+
+$distgName = new UniqueName(["common"=>"test"]);
+$conf = new Config();
+
+$keyBuilder = new KeyPairBuilder($conf);
+$csrBuilder = new CsrBuilder($distgName, $keyBuilder, $conf);
+
+$request = $csrBuilder->getCsr(); //Strukt\Ssl\Csr\Csr
+
+$privKey = $keyBuilder->getPrivateKey(); //Strukt\Ssl\PrivateKey
+
+$cert = $privKey->getSelfSignedCert($request); //string
+
+$request->setCert($cert);
+
+Csr::verifyCert($privKey, $cert));//boolean
+```

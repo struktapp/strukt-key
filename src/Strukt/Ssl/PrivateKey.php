@@ -2,6 +2,8 @@
 
 namespace Strukt\Ssl;
 
+use Strukt\Ssl\Csr\Csr;
+
 class PrivateKey{
 
 	private $res = null;
@@ -28,6 +30,12 @@ class PrivateKey{
 		return $this;
 	}
 
+
+	public function getConf(){
+
+		return $this->conf;
+	}
+
 	public function withPass($pass){
 
 		$this->pass = $pass;
@@ -52,5 +60,21 @@ class PrivateKey{
 	public function getPublicKey(){
 
 		return new PublicKey($this->getResource());
+	}
+
+	/**
+	 * self signing
+	 */
+	public function getSelfSignedCert(Csr $request, $days=365){
+
+		$confList = null;
+		if(!is_null($this->conf))
+			$confList = $this->conf->getAll();
+
+		$privKeyRes = $this->getResource();
+
+		$cert = openssl_csr_sign($request->getCsr(), null, $privKeyRes, $days, $confList);
+
+		return $cert;
 	}
 }
