@@ -70,9 +70,9 @@ $decrypted = $c->decrypt($encrypted);
 $builder->freeKey();
 ```
 
-### Certificate Signing Request (CSR)
+## Certificate Signing Request (CSR)
 
-## Self Signed CSR
+### Self Signed CSR
 
 Generate or get a self signed certificate
 
