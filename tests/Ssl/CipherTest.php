@@ -4,6 +4,8 @@ use Strukt\Ssl\KeyPair;
 use Strukt\Ssl\KeyPairBuilder;
 use Strukt\Ssl\Cipher;
 
+use Strukt\Ssl\All;
+
 use PHPUnit\Framework\TestCase;
 
 class CipherTest extends TestCase{
@@ -13,13 +15,10 @@ class CipherTest extends TestCase{
 		$this->message = "Hi, my is what? My is who? My name is (Tski tski) Slim Shady!";
 	}
 
-	public function testKeyPairBuilderEncryptDecrypt(){
+	public function testKeyPairBuilderCipher(){
 
-		$builder = new KeyPairBuilder();
-
-		$encrypted = Cipher::encryptWith($builder->getPublicKey(), $this->message);
-
-		$cipher = new Cipher($builder);
+		$cipher = All::makeKeys()->useCipher();
+		$encrypted = $cipher->encrypt($this->message);
 		$decrypted = $cipher->decrypt($encrypted);
 
 		$this->assertEquals($this->message, $decrypted);
@@ -27,31 +26,31 @@ class CipherTest extends TestCase{
 
 	public function testKeyPairEncrypDecryptNoPass(){
 
-		$this->markTestSkipped('Requires private key file.');
+		$this->markTestSkipped('@requires:privKeyFile');
 
-		$path = sprintf("file:///%s", realpath("fixture/no-pass/pri.pem"));
+		// $path = sprintf("file:///%s", realpath("fixture/no-pass/pri.pem"));
 
-		$keys = new KeyPair($path);
+		// $keys = new KeyPair($path);
 
-		$c = new Cipher($keys);
-		$encrypted = $c->encrypt($this->message);
-		$decrypted = $c->decrypt($encrypted);
+		// $c = new Cipher($keys);
+		// $encrypted = $c->encrypt($this->message);
+		// $decrypted = $c->decrypt($encrypted);
 
-		$this->assertEquals($this->message, $decrypted);
+		// $this->assertEquals($this->message, $decrypted);
 	}
 
 	public function testKeyPairEncryptDecryptWithPass(){
 
-		$this->markTestSkipped('Requires private key file.');
+		$this->markTestSkipped('@requires:privKeyFile');
 
-		$path = sprintf("file:///%s", realpath("fixture/pass/pri.pem"));
+		// $path = sprintf("file:///%s", realpath("fixture/pass/pri.pem"));
 
-		$keys = new KeyPair($path, "p@55w0rd");
+		// $keys = new KeyPair($path, "p@55w0rd");
 
-		$cipher = new Cipher($keys);
-		$encrypted = $cipher->encrypt($this->message);
-		$decrypted = $cipher->decrypt($encrypted);
+		// $cipher = new Cipher($keys);
+		// $encrypted = $cipher->encrypt($this->message);
+		// $decrypted = $cipher->decrypt($encrypted);
 
-		$this->assertEquals($this->message, $decrypted);
+		// $this->assertEquals($this->message, $decrypted);
 	}
 }

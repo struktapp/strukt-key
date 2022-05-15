@@ -1,57 +1,43 @@
 <?php
 
-use Strukt\Ssl\KeyPair;
-use Strukt\Ssl\KeyPairBuilder;
-use Strukt\Ssl\Csr\CsrBuilder;
-use Strukt\Ssl\Csr\Csr;
-use Strukt\Ssl\Csr\UniqueName;
-use Strukt\Ssl\Config;
-
 use PHPUnit\Framework\TestCase;
+
+use Strukt\Ssl\All;
 
 class CsrTest extends TestCase{
 
 	public function setUp():void{
 
-		$distgName = new UniqueName(["common"=>"test"]);
-		$conf = new Config();
-
-		$this->keyBuilder = new KeyPairBuilder($conf); 
-		$this->csrBuilder = new CsrBuilder($distgName, $this->keyBuilder, $conf);
+		//
 	}
 
-	public function testSelfSigningAndVerification():Csr{
+	// public function testSelfSigningAndVerification():Csr{
+	public function testSelfSigningAndVerification(){
 
-		$request = $this->csrBuilder->getCsr();
+		$oCsr = All::makeKeys()->useCsr();
 
-		$privKey = $this->keyBuilder->getPrivateKey();
+		// $request = $oCsr->getCsr();
 
-		$cert = $privKey->getSelfSignedCert($request);
+		$xCert = $oCsr->selfSign()->getXCert();
 
-		$request->setCert($cert);
+		$this->assertTrue($oCsr->verify($xCert));
 
-		$this->assertTrue(Csr::verifyCert($privKey, $cert));
-
-		return $request;
+		// return $request;
 	}
 
 	/**
-	* @depends testSelfSigningAndVerification
+	* @/depends testSelfSigningAndVerification
 	*/
-	public function testSigningAndVerification(Csr $request){
+	public function testSigningAndVerification(){
+	// public function testSigningAndVerification(Csr $request){
 
-		// $this->markTestSkipped('There is a problem here and no one knows why!');
+		$kpath = sprintf("file://%s/fixture/pitsolu", getcwd());
+		$cpath = sprintf("file://%s/fixture/cacert.pem", getcwd());
 
-		$request = $this->csrBuilder->getCsr();
-		$request->setCert(sprintf("file://%s/fixture/cacert.pem", getcwd()));
+		$oCsr = All::keyPath($kpath)->withCert($cpath);
 
-		$otherKeyBuilder = new KeyPairBuilder(new Config());
-		$privKey = $otherKeyBuilder->getPrivateKey();
+		$cert = $oCsr->sign();
 
-		$cert = Csr::sign($request, $privKey);
-
-		$this->assertTrue(Csr::verifyCert($privKey, $cert));
-
-		Strukt\Ssl\ErrorHandler::getErrors();
+		$this->assertTrue($oCsr->verify($cert));
 	}
 }

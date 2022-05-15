@@ -13,10 +13,10 @@
 
     	"php": ">=7.0",
         "ext-openssl": "*",
-		"strukt/commons": "v1.0.5-alpha",
+		"strukt/commons": "dev-master",
 		"symfony/http-foundation": "^4.2",
 		"strukt/console": "^1.0",
-        "strukt/fs": "^1.0"
+        "strukt/fs": "1.0.0"
     },
     "autoload": {
         
@@ -25,5 +25,6 @@
             "Strukt\\": "src/"
         }
     },
-    "bin":["console"]
+    "bin":["console"],
+    "minimum-stability":"dev"
 }

@@ -1,11 +1,7 @@
 <phpunit bootstrap="bootstrap.php">
   <testsuites>
-    <testsuite name="Crypt">
-      <!-- <directory>./tests</directory> -->
-      <file>tests/Ssl/CsrTest.php</file>
-      <file>tests/Ssl/CipherTest.php</file>
-      <file>tests/Ssl/EnvelopeTest.php</file>
-      <file>tests/Ssl/SignerTest.php</file>
+    <testsuite name="Strukt Key">
+      <directory>./tests</directory>
     </testsuite>
   </testsuites>
 </phpunit>

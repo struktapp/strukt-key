@@ -1,4 +1,4 @@
-<?php
+```php
 // Let's assume that this script is set to receive a CSR that has
 // been pasted into a textarea from another page
 // $csrdata = $_POST["CSR"];
@@ -46,3 +46,4 @@ echo $certout;
 while (($e = openssl_error_string()) !== false) {
     echo $e . "\n";
 }
+```

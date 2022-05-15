@@ -3,6 +3,7 @@
 namespace Strukt\Ssl;
 
 use Strukt\Ssl\Csr\Csr;
+use Strukt\Fs;
 
 class PrivateKey{
 
@@ -16,6 +17,18 @@ class PrivateKey{
 			throw new \Exception("Is not a resource!");
 
 		$this->res = $res;
+	}
+
+	public static function fromPath(string $path){
+
+		$pem_private_key = Fs::cat($path);
+
+		return new self(openssl_pkey_get_private($pem_private_key));
+	}
+
+	public static function fromPem($data){
+
+		return new self(openssl_pkey_get_private($data));
 	}
 
 	public function getResource(){
@@ -59,7 +72,7 @@ class PrivateKey{
 
 	public function getPublicKey(){
 
-		return new PublicKey($this->getResource());
+		return PublicKey::fromPrivateKey($this->getResource());
 	}
 
 	/**

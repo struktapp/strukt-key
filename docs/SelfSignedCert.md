@@ -1,4 +1,4 @@
-<?php
+```php
 // for SSL server certificates the commonName is the domain name to be secured
 // for S/MIME email certificates the commonName is the owner of the email address
 // location and identification fields refer to the owner of domain or email subject to be secured
@@ -33,3 +33,4 @@ openssl_pkey_export($privkey, $pkeyout, "mypassword") and var_dump($pkeyout);
 while (($e = openssl_error_string()) !== false) {
     echo $e . "\n";
 }
+```

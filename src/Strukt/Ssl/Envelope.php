@@ -2,48 +2,81 @@
 
 namespace Strukt\Ssl;
 
+use Strukt\Raise;
+
 class Envelope{
 
-	public function __construct(KeyPairContract $keys){
+	public static function withCerts(array $paths){
 
-		$this->keys = $keys;
+		foreach($paths as $path)
+			$certs[] = Cert::withPath($path);
+
+		return new class($certs){
+
+			private $certs;
+
+			public function __construct(array $certs){
+
+				$this->certs = $certs;
+			}
+
+			public function close(string $data){
+
+				foreach($this->certs as $cert)
+					$pubKeys[] = $cert->getResource(); 
+
+				$cipher_algo = "AES256";
+				$iv = openssl_random_pseudo_bytes(32); //The initialization vector.
+
+				if(!openssl_seal($data, $sealed, $envKeys, $pubKeys, $cipher_algo, $iv))
+					new Raise("Unable to seal message!");
+
+				return array($envKeys, $sealed);
+			}
+		};
 	}
 
-	public function open($envKey, $sealed){
+	public static function withPrivKey(PrivateKey $privKey){
 
-		$privKeyRes = $this->keys->getPrivateKey()->getResource();
+		$resource = $privKey->getResource();
 
-		openssl_open($sealed, $open, $envKey, $privKeyRes);
+		return new class($resource){
 
-		return $open;
+			private $resource;
+
+			public function __construct($resource){
+
+				$this->resource = $resource;
+			}
+
+			public function open($envKey, $sealed){
+
+				$cipher_algo = "AES256";
+				$iv = openssl_random_pseudo_bytes(32); //The initialization vector.
+
+				if(!openssl_open($sealed, $open, $envKey, $this->resource, $cipher_algo, $iv))
+					new Raise("Unable to open message!");
+
+				return $open;
+			}
+		};
 	}
 
-	public function close($data){
+	// public static function closeWith(PublicKey $pubKey, $data){
 
-		$pubKey = $this->keys->getPublicKey()->getPem();
+	// 	$pubKey = $pubKey->getResource();
 
-		openssl_seal($data, $sealed, $envKeys, array($pubKey));
+	// 	openssl_seal($data, $sealed, $envKeys, array($this->pubKey));
 
-		return array($envKeys, $sealed);
-	}
+	// 	return array($envKeys, $sealed);
+	// }
 
-	public static function closeWith(PublicKey $pubKey, $data){
+	// public static function closeAllWith(PublicKeyList $pubKeyList, $data){
 
-		$pubKey = $pubKey->getPem();
+	// 	$pubKeys = $pubKeyList->getKeys();
 
-		openssl_seal($data, $sealed, $envKeys, array($pubKey));
+	// 	openssl_seal($data, $sealed, $envKeys, $pubKeys);
 
-		$envKey = current($envKeys);
-
-		return array($envKey, $sealed);
-	}
-
-	public static function closeAllWith(PublicKeyList $pubKeyList, $data){
-
-		$pubKeys = $pubKeyList->getKeys();
-
-		openssl_seal($data, $sealed, $envKeys, $pubKeys);
-
-		return array($envKeys, $sealed);
-	}
+	// 	return array($envKeys, $sealed);
+	// }
 }

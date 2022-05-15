@@ -31,10 +31,11 @@ class Csr{
 	private $csr;
 	private $cert;
 
-	public function __construct($csr = null, $cert = null){
+	// public function __construct($csr = null, $cert = null){
+	public function __construct($csr = null){
 
 		$this->setCsr($csr);
-		$this->setCert($cert);
+		// $this->setCert($cert);
 	}
 
 	public function getCsr(){
@@ -44,8 +45,8 @@ class Csr{
 
 	public function setCsr($csr){
 
-		if(!is_null($csr))
-			openssl_csr_export($csr, $this->csr);
+		// if(!is_null($csr))
+		openssl_csr_export($csr, $this->csr);
 	}
 
 	public function getCert(){
@@ -53,10 +54,11 @@ class Csr{
 		return $this->cert;
 	}
 
-	public function setCert($cert){
+	// public function setCert($cert){
+	public function exportCert($cert){
 
-		if(!is_null($cert))
-			openssl_x509_export($cert, $this->cert);
+		// if(!is_null($cert))
+		openssl_x509_export($cert, $this->cert);
 	}
 
 	public function getSubject(){

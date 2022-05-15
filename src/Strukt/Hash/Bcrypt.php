@@ -2,7 +2,7 @@
 
 namespace Strukt\Hash;
 
-use Strukt\Util\Str;
+use Strukt\Type\Str;
 
 /**
 @link https://goo.gl/fLtLGn
