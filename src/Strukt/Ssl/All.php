@@ -60,38 +60,28 @@ class All{
 	/**
 	* Envelope
 	*/
-	// public function withEnvl(){
+	public static function withEnvl(PrivateKey $privKey = null){
 
-	// 	$envelope = new Envelope($this->keys);
+		return new class($privKey){
 
-	// 	return new class($envelope, $this->keys){
+			private $privKey;
 
-	// 		private $envelope;
-	// 		private $keys;
+			public function __construct($privKey){
 
-	// 		public function __construct($envelope, $keys){
+				$this->privKey = $privKey;
+			}
 
-	// 			$this->keys = $keys;
-	// 			$this->envelope = $envelope;
-	// 		}
+			public function close(array $paths, string $message){
 
-	// 		public function close(string $message){
+				return Envelope::withCerts($paths)->close($message);
+			}
 
-	// 			$pubKey = $this->keys->getPublicKey();
+			public function open($envKey, $sealed){
 
-	// 			list($key, $sealed) = Envelope::closeWith($pubKey, $message);
-
-	// 			return array($key, $sealed);
-	// 		}
-
-	// 		public function open($key, $sealed){
-
-	// 			$unseal = $this->envelope->open($key, $sealed);
-
-	// 			return $unseal;
-	// 		}
-	// 	};
-	// }
+				return Envelope::withPrivKey($this->privKey)->open($envKey, $sealed);
+			}
+		};
+	}
 
 	/**
 	* Cert

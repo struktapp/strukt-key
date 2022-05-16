@@ -8,3 +8,6 @@ test2.php
 .composer*
 .phpunit.result.cache
 ssl.cfg.ini  
+fixture/pitsolu
+fixture/pitsolu.pub
+fixture/cacert.pem

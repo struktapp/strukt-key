@@ -5,15 +5,17 @@ use Strukt\Ssl\Config;
 use Strukt\Ssl\Envelope;
 use Strukt\Ssl\PublicKeyList;
 
+use Strukt\Ssl\All;
+
 use PHPUnit\Framework\TestCase;
 
 class EnvelopeTest extends TestCase{
 
 	public function setUp():void{
 
-		$this->builder = new KeyPairBuilder(new Config());
+		// $this->builder = new KeyPairBuilder(new Config());
 
-		$this->envelope = new Envelope($this->builder);
+		// $this->envelope = new Envelope($this->builder);
 	}
 
 	// public function testSingleSealUnseal(){
@@ -23,7 +25,7 @@ class EnvelopeTest extends TestCase{
 
 		$message = "Hello World!";
 
-		$sealed = Envelope::withCerts($paths)->close($message);
+		$sealed = All::withEnvl()->close($paths, $message);
 
 		$this->assertNotNull($sealed[0]);
 	}
