@@ -117,7 +117,10 @@ class All{
 				return $cert;
 			}
 
-			public function verify($cert){
+			public function verify($cert = null){
+
+				if(is_null($cert))
+					$cert = $this->getCert();
 
 				return Csr::verifyCert($this->keys->getPrivateKey(), $cert);
 			}

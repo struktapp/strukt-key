@@ -11,3 +11,5 @@ ssl.cfg.ini
 fixture/pitsolu
 fixture/pitsolu.pub
 fixture/cacert.pem
+fixture/samweru
+fixture/samweru.pub

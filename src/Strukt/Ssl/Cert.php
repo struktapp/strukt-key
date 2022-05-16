@@ -23,6 +23,14 @@ class Cert{
 
 	public function getResource(){
 
-		return openssl_get_publickey($this->data);
+		// return openssl_get_publickey($this->data);
+		return openssl_pkey_get_public($this->data);
+	}
+
+	public function extractPublicKey(){
+
+		$details = openssl_pkey_get_details($this->getResource());
+
+		return new PublicKey(openssl_get_publickey($details["key"]));
 	}
 }

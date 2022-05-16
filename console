@@ -9,6 +9,8 @@ $app->add(new Strukt\Ssl\Command\Encrypt);
 $app->add(new Strukt\Ssl\Command\Decrypt);
 $app->add(new Strukt\Ssl\Command\Certificate);
 $app->add(new Strukt\Ssl\Command\CertificateSelfSign);
+$app->add(new Strukt\Ssl\Command\CertificateVerify);
+$app->add(new Strukt\Ssl\Command\CertificateExtractPublicKey);
 $app->add(new Strukt\Ssl\Command\DumpCfg);
 $app->add(new Strukt\Hash\Command\Sha);
 exit($app->run($_SERVER["argv"]));

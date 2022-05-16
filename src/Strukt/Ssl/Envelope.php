@@ -3,66 +3,94 @@
 namespace Strukt\Ssl;
 
 use Strukt\Raise;
+use Strukt\Ssl\PublicKey;
 
 class Envelope{
 
-	public static function withCerts(array $paths){
+	private $cipher;
+	private $iv;
+
+	public function __construct($cipher){
+
+		$this->cipher = $cipher;
+		$ivlen = openssl_cipher_iv_length($cipher);
+		$this->iv = openssl_random_pseudo_bytes($ivlen);
+	}
+
+	public static function withAlgo($cipher = "AES-128-CBC"){
+
+		return new self($cipher);
+	}
+
+	public function useCerts(array $paths){
 
 		foreach($paths as $path)
 			$certs[] = Cert::withPath($path);
 
-		return new class($certs){
+		// print_r($certs[0]->getResource());
+
+		return new class($certs, $this->cipher, $this->iv){
 
 			private $certs;
+			private $cipher;
+			private $iv;
 
-			public function __construct(array $certs){
+			public function __construct(array $certs, string $cipher, $iv){
 
 				$this->certs = $certs;
+				$this->cipher = $cipher;
+				$this->iv = $iv;
 			}
 
 			public function close(string $data){
 
-				foreach($this->certs as $cert)
-					$pubKeys[] = $cert->getResource(); 
+				foreach($this->certs as $cert){
 
-				// $cipher_algo = "AES256";
-				// $iv = openssl_random_pseudo_bytes(32); //The initialization vector.
+					$pubKey = $cert->extractPublicKey();
+					$pubKeys[] = $pubKey->getResource();
+				}
 
-				$cipher_algo = 'AES-128-CBC';
-				$ivlen = openssl_cipher_iv_length($method);
+				// if(!
+				openssl_seal($data, $sealed, $envKeys, $pubKeys, $this->cipher, $this->iv);//)
+					// new Raise("Unable to seal message!");
 
-				if(!openssl_seal($data, $sealed, $envKeys, $pubKeys, $cipher_algo, $ivlen))
-					new Raise("Unable to seal message!");
+				$eKeys = [];
+				foreach($envKeys as $envKey)
+					$eKeys[] = base64_encode($envKey);
 
-				return array($envKeys, $sealed);
+				return array($eKeys, base64_encode($sealed));
 			}
 		};
 	}
 
-	public static function withPrivKey(PrivateKey $privKey){
+	public function usePrivKey(PrivateKey $privKey){
 
 		$resource = $privKey->getResource();
 
-		return new class($resource){
+		return new class($resource, $this->cipher, $this->iv){
 
 			private $resource;
+			private $cipher;
+			private $iv;
 
-			public function __construct($resource){
+			public function __construct($resource, string $cipher, $iv){
 
 				$this->resource = $resource;
+				$this->cipher = $cipher;
+				$this->iv = $iv;
 			}
 
 			public function open($envKey, $sealed){
 
-				// $cipher_algo = "AES256";
-				// $iv = openssl_random_pseudo_bytes(32); //The initialization vector.
+				$envKey = base64_decode($envKey);
+				$sealed = base64_decode($sealed);
 
-				$cipher_algo = 'AES-128-CBC';
-				$ivlen = openssl_cipher_iv_length($method);
-
-				// if(!openssl_open($sealed, $open, $envKey, $this->resource));
-				if(!openssl_open($sealed, $open, $envKey, $this->resource, $cipher_algo, $ivlen))
-					new Raise("Unable to open message!");
+				// if(!
+					openssl_open($sealed, $open, $envKey, 
+								$this->resource, 
+								$this->cipher, 
+								$this->iv);//)
+					// new Raise("Unable to open message!");
 
 				return $open;
 			}
