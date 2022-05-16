@@ -25,10 +25,13 @@ class Envelope{
 				foreach($this->certs as $cert)
 					$pubKeys[] = $cert->getResource(); 
 
-				$cipher_algo = "AES256";
-				$iv = openssl_random_pseudo_bytes(32); //The initialization vector.
+				// $cipher_algo = "AES256";
+				// $iv = openssl_random_pseudo_bytes(32); //The initialization vector.
 
-				if(!openssl_seal($data, $sealed, $envKeys, $pubKeys, $cipher_algo, $iv))
+				$cipher_algo = 'AES-128-CBC';
+				$ivlen = openssl_cipher_iv_length($method);
+
+				if(!openssl_seal($data, $sealed, $envKeys, $pubKeys, $cipher_algo, $ivlen))
 					new Raise("Unable to seal message!");
 
 				return array($envKeys, $sealed);
@@ -51,10 +54,14 @@ class Envelope{
 
 			public function open($envKey, $sealed){
 
-				$cipher_algo = "AES256";
-				$iv = openssl_random_pseudo_bytes(32); //The initialization vector.
+				// $cipher_algo = "AES256";
+				// $iv = openssl_random_pseudo_bytes(32); //The initialization vector.
 
-				if(!openssl_open($sealed, $open, $envKey, $this->resource, $cipher_algo, $iv))
+				$cipher_algo = 'AES-128-CBC';
+				$ivlen = openssl_cipher_iv_length($method);
+
+				// if(!openssl_open($sealed, $open, $envKey, $this->resource));
+				if(!openssl_open($sealed, $open, $envKey, $this->resource, $cipher_algo, $ivlen))
 					new Raise("Unable to open message!");
 
 				return $open;
