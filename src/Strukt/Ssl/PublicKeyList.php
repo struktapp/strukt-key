@@ -12,6 +12,11 @@ class PublicKeyList{
 			$this->addKey($key);
 	}
 
+	public static function make(Array $keyList = []){
+
+		return new self($keyList);
+	}
+
 	public function addKey($key){
 
 		$this->keys[] = PublicKey::fromPem($key);

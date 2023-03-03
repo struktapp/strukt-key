@@ -24,35 +24,32 @@ class Envelope{
 
 	public function useCerts(array $paths){
 
+		$pubKeyLs = PublicKeyList::make();
 		foreach($paths as $path)
-			$certs[] = Cert::withPath($path);
+			$pubKeyLs->addKey(Cert::withPath($path)->extractPublicKey()->getResource());
 
-		// print_r($certs[0]->getResource());
+		return new class($pubKeyLs, $this->cipher, $this->iv){
 
-		return new class($certs, $this->cipher, $this->iv){
-
-			private $certs;
+			private $pubKeyLs;
 			private $cipher;
 			private $iv;
 
-			public function __construct(array $certs, string $cipher, $iv){
+			public function __construct(PublicKeyList $pubKeyLs, string $cipher, $iv){
 
-				$this->certs = $certs;
+				$this->pubKeyLs = $pubKeyLs;
 				$this->cipher = $cipher;
 				$this->iv = $iv;
 			}
 
 			public function close(string $data){
 
-				foreach($this->certs as $cert){
-
-					$pubKey = $cert->extractPublicKey();
-					$pubKeys[] = $pubKey->getResource();
-				}
+				$pubKeys = $this->pubKeyLs->getKeys();
 
 				// if(!
 				openssl_seal($data, $sealed, $envKeys, $pubKeys, $this->cipher, $this->iv);//)
 					// new Raise("Unable to seal message!");
+
+				$this->pubKeyLs->freeAll();
 
 				$eKeys = [];
 				foreach($envKeys as $envKey)

@@ -13,7 +13,7 @@
 
     	"php": ">=7.0",
         "ext-openssl": "*",
-		"strukt/commons": "dev-master",
+		"strukt/commons": "v1.0.8-alpha",
 		"symfony/http-foundation": "^4.2",
 		"strukt/console": "^1.0",
         "strukt/fs": "1.0.0"
