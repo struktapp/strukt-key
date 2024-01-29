@@ -1,6 +1,6 @@
 <?php
 
-namespace Strukt\Ssl\Command;
+namespace Strukt\Console\Command;
 
 use Strukt\Console\Input;
 use Strukt\Console\Output;
@@ -13,7 +13,11 @@ use Strukt\Fs;
 * 
 * Usage:
 *   
-*      cry:keys --name <name> [--pass <pass>]
+*      cry:keys <name> [--pass <pass>]
+*
+* Arguments:
+*
+*     name   file name
 * 
 * Options:
 * 

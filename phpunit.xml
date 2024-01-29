@@ -1,10 +1,8 @@
-<phpunit bootstrap="bootstrap.php">
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="bootstrap.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd" cacheDirectory=".phpunit.cache">
   <testsuites>
     <testsuite name="Strukt Key">
       <directory>./tests</directory>
     </testsuite>
   </testsuites>
-  <listeners>
-    <listener class="FixtureListener" file="./tests/FixtureListener.php"></listener>
-</listeners>
 </phpunit>

@@ -73,7 +73,7 @@ class All{
 
 			public function close(array $paths, string $message){
 
-				return Envelope::withCerts($paths)->close($message);
+				return Envelope::withAlgo()->useCerts($paths)->close($message);
 			}
 
 			public function open($envKey, $sealed){

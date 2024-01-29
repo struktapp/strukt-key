@@ -10,14 +10,14 @@ class Envelope{
 	private $cipher;
 	private $iv;
 
-	public function __construct($cipher){
+	public function __construct(string $cipher){
 
 		$this->cipher = $cipher;
 		$ivlen = openssl_cipher_iv_length($cipher);
 		$this->iv = openssl_random_pseudo_bytes($ivlen);
 	}
 
-	public static function withAlgo($cipher = "AES-128-CBC"){
+	public static function withAlgo(string $cipher = "AES-128-CBC"){
 
 		return new self($cipher);
 	}

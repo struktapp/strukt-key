@@ -13,10 +13,9 @@
 
     	"php": ">=7.0",
         "ext-openssl": "*",
-		"strukt/commons": "v1.0.8-alpha",
+		"strukt/commons": "v1.1.1-alpha",
 		"symfony/http-foundation": "^4.2",
-		"strukt/console": "^1.0",
-        "strukt/fs": "1.0.0"
+		"strukt/console": "1.0.0"
     },
     "autoload": {
         

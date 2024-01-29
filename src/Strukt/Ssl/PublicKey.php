@@ -6,10 +6,10 @@ class PublicKey{
 
 	private $res;
 
-	public function __construct($res){
+	public function __construct(\OpenSSLAsymmetricKey $res){
 
-		if(!is_resource($res))
-			throw new \Exception("Is not resource!");
+		// if(!is_resource($res))
+			// throw new \Exception("Is not resource!");
 			
 		$this->res = $res;
 	}

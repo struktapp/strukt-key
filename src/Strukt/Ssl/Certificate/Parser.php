@@ -9,15 +9,15 @@ class Parser{
 	private $cert;
 	private $fingerprint;
 
-	public function __construct($resource){
+	public function __construct(\OpenSSLCertificate $res){
 
-		if(!is_resource($resource))
-			throw new \Exception("Certificate parser requires resource!");
+		// if(!is_resource($res))
+			// throw new \Exception("Certificate parser requires resource!");
 			
-		$this->fingerprint = openssl_x509_fingerprint($resource);
+		$this->fingerprint = openssl_x509_fingerprint($res);
 
 		$builder = new CollectionBuilder();
-		$this->cert = $builder->fromAssoc(openssl_x509_parse($resource));
+		$this->cert = $builder->fromAssoc(openssl_x509_parse($res));
 	}
 
 	public function getIssuer(){

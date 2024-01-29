@@ -1,6 +1,6 @@
 <?php
 
-namespace Strukt\Ssl\Command;
+namespace Strukt\Console\Command;
 
 use Strukt\Console\Input;
 use Strukt\Console\Output;
@@ -13,11 +13,11 @@ use Strukt\Ssl\All;
 *
 * Usage:
 *
-*      cert:selfsign --priv <prikey> [--out <out>] 
+*      cert:selfsign --priv <priv> [--out <out>] 
 *
 * Options:
 *
-*      --priv -k   File name
+*      --priv -k   File name priv key
 *	   --out  -o   Output file
 */
 class CertificateSelfSign extends \Strukt\Console\Command{ 

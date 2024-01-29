@@ -73,7 +73,7 @@ class Csr{
 		return self::parseCert($this->cert);
 	}
 
-	public function verifyWith(PrivateKey $privKey):boolean{
+	public function verifyWith(PrivateKey $privKey):bool{
 
 		return self::verifyCert($privKey, $this->cert);
 	}
@@ -94,7 +94,7 @@ class Csr{
 
 	public static function sign(Csr $request, PrivateKey $privKey, array $settings = null){
 
-		$privKeyRes = $privKey->getResource();
+		$privKeyRes = $privKey->getKey();
 
 		$csr = $request->getCsr();
 		$cert = $request->getCert();

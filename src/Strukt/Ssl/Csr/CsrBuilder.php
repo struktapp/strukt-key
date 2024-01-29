@@ -43,7 +43,7 @@ class CsrBuilder{
 		if(empty($this->distgName))
 			throw new \Exception("Distinguishing Name is empty!");
 
-		$privKeyRes = $keys->getPrivateKey()->getResource();
+		$privKeyRes = $keys->getPrivateKey()->getKey();
 
 		if(is_null($conf))
 			$conf = new Config();

@@ -1,6 +1,6 @@
 <?php
 
-namespace Strukt\Hash\Command;
+namespace Strukt\Console\Command;
 
 use Strukt\Console\Input;
 use Strukt\Console\Output;

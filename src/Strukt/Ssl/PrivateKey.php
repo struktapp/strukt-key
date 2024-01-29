@@ -11,10 +11,10 @@ class PrivateKey{
 	private $pass = null;
 	private $conf = null;
 
-	public function __construct($res){
+	public function __construct(\OpenSSLAsymmetricKey $res){
 
-		if(!is_resource($res))
-			throw new \Exception("Is not a resource!");
+		// if(!is_resource($res))
+			// throw new \Exception("Is not a resource!");
 
 		$this->res = $res;
 	}
@@ -31,7 +31,7 @@ class PrivateKey{
 		return new self(openssl_pkey_get_private($data));
 	}
 
-	public function getResource(){
+	public function getKey(){
 
 		return $this->res;
 	}
@@ -72,7 +72,7 @@ class PrivateKey{
 
 	public function getPublicKey(){
 
-		return PublicKey::fromPrivateKey($this->getResource());
+		return PublicKey::fromPrivateKey($this->getKey());
 	}
 
 	/**
@@ -84,7 +84,7 @@ class PrivateKey{
 		if(!is_null($this->conf))
 			$confList = $this->conf->getAll();
 
-		$privKeyRes = $this->getResource();
+		$privKeyRes = $this->getKey();
 
 		$cert = openssl_csr_sign($request->getCsr(), null, $privKeyRes, $days, $confList);
 

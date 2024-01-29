@@ -16,7 +16,7 @@ class Cipher{
 	*/
 	public function decrypt($encrypted){
 
-		openssl_private_decrypt($encrypted, $decrypted, $this->keys->getPrivateKey()->getResource());
+		openssl_private_decrypt($encrypted, $decrypted, $this->keys->getPrivateKey()->getKey());
 
 		return $decrypted;
 	}
