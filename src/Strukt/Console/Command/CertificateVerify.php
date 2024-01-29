@@ -13,18 +13,18 @@ use Strukt\Ssl\All;
 *
 * Usage:
 *
-*      cert:selfsign --priv <prikey> --cert <cert> 
+*      cert:verify <privkey> <cert>
 *
-* Options:
+* Arguments:
 *
-*      --priv -k   Private Key Path
-*	   --cert -c   Certificate Path
+*     privkey   Private Key Path
+*     cert      Certificate Path
 */
 class CertificateVerify extends \Strukt\Console\Command{ 
 
 	public function execute(Input $in, Output $out){
 
-		$priv = $in->get("priv");
+		$priv = $in->get("privkey");
 		$cert = $in->get("cert");
 
 		$cpath = sprintf("file://%s/%s", getcwd(), $cert);

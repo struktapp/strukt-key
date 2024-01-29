@@ -13,18 +13,18 @@ use Strukt\Ssl\All;
 *
 * Usage:
 *
-*      cert:selfsign --priv <priv> [--out <out>] 
+*      cert:selfsign <privkey> [<out>]
 *
-* Options:
+* Arguments:
 *
-*      --priv -k   File name priv key
-*	   --out  -o   Output file
+*     privkey   Private Key Path
+*     out       Certificate Path
 */
 class CertificateSelfSign extends \Strukt\Console\Command{ 
 
 	public function execute(Input $in, Output $out){
 
-		$priv = $in->get("priv");
+		$priv = $in->get("privkey");
 		// $pass = $in->get("pass");
 		$output = $in->get("out");
 

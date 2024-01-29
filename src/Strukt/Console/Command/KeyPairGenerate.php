@@ -10,18 +10,17 @@ use Strukt\Fs;
 
 /**
 * cry:keys          Key Pair Builder
-* 
+*
 * Usage:
-*   
+*
 *      cry:keys <name> [--pass <pass>]
 *
 * Arguments:
 *
 *     name   file name
-* 
+*
 * Options:
-* 
-*      --name -n   File name
+*
 *      --pass -p   Password
 */
 class KeyPairGenerate extends \Strukt\Console\Command{ 
