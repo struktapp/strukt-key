@@ -10,6 +10,8 @@ test2.php
 ssl.cfg.ini  
 fixture/pitsolu
 fixture/pitsolu.pub
+fixture/pitsolu_next
+fixture/pitsolu_next.pub
 fixture/cacert.pem
 fixture/samweru
 fixture/samweru.pub

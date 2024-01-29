@@ -1,8 +1,8 @@
 <?php
 
-namespace Strukt\Ssl;
+namespace Strukt\Contract;
 
-abstract class AbstractKeyPair implements KeyPairContract{
+abstract class AbstractKeyPair implements KeyPairInterface{
 
 	protected $privateKey;
 	protected $publicKey;

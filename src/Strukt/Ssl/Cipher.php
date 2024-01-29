@@ -2,11 +2,13 @@
 
 namespace Strukt\Ssl;
 
+use Strukt\Contract\KeyPairInterface;
+
 class Cipher{
 
 	private $keys;
 
-	public function __construct(KeyPairContract $keys){
+	public function __construct(KeyPairInterface $keys){
 
 		$this->keys = $keys;
 	}	

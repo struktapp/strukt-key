@@ -2,9 +2,9 @@
 
 namespace Strukt\Ssl;
 
+use Strukt\Contract\KeyPairInterface;
 use Strukt\Ssl\KeyPairBuilder;
 use Strukt\Ssl\KeyPair;
-use Strukt\Ssl\KeyPairContract;
 use Strukt\Ssl\Config;
 use Strukt\Ssl\Envelope;
 use Strukt\Ssl\PublicKeyList;
@@ -18,7 +18,7 @@ class All{
 	private $keys;
 	private static $config;
 
-	public function __construct(KeyPairContract $keys){
+	public function __construct(KeyPairInterface $keys){
 
 		$this->keys = $keys;
 	}
@@ -52,7 +52,7 @@ class All{
 		return new self(new KeyPairBuilder(static::$config));
 	}
 
-	public function getKeys():KeyPairContract{
+	public function getKeys():KeyPairInterface{
 
 		return $this->keys;
 	}
@@ -60,25 +60,27 @@ class All{
 	/**
 	* Envelope
 	*/
-	public static function withEnvl(PrivateKey $privKey = null){
+	public static function withEnvl($iv, PrivateKey $privKey = null){
 
-		return new class($privKey){
+
+		return new class($iv, $privKey){
 
 			private $privKey;
 
-			public function __construct($privKey){
+			public function __construct($iv, $privKey){
 
 				$this->privKey = $privKey;
+				$this->iv = $iv;
 			}
 
 			public function close(array $paths, string $message){
 
-				return Envelope::withAlgo()->useCerts($paths)->close($message);
+				return Envelope::withAlgo($this->iv)->useCerts($paths)->close($message);
 			}
 
 			public function open($envKey, $sealed){
 
-				return Envelope::withPrivKey($this->privKey)->open($envKey, $sealed);
+				return Envelope::withAlgo($this->iv)->usePrivKey($this->privKey)->open($envKey, $sealed);
 			}
 		};
 	}

@@ -26,31 +26,31 @@ class CipherTest extends TestCase{
 
 	public function testKeyPairEncrypDecryptNoPass(){
 
-		$this->markTestSkipped('@requires:privKeyFile');
+		// $this->markTestSkipped('@requires:privKeyFile');
 
-		// $path = sprintf("file:///%s", realpath("fixture/no-pass/pri.pem"));
+		$path = sprintf("file:///%s", realpath("fixture/pitsolu"));
 
-		// $keys = new KeyPair($path);
+		$keys = new KeyPair($path);
 
-		// $c = new Cipher($keys);
-		// $encrypted = $c->encrypt($this->message);
-		// $decrypted = $c->decrypt($encrypted);
+		$c = new Cipher($keys);
+		$encrypted = $c->encrypt($this->message);
+		$decrypted = $c->decrypt($encrypted);
 
-		// $this->assertEquals($this->message, $decrypted);
+		$this->assertEquals($this->message, $decrypted);
 	}
 
 	public function testKeyPairEncryptDecryptWithPass(){
 
-		$this->markTestSkipped('@requires:privKeyFile');
+		// $this->markTestSkipped('@requires:privKeyFile');
 
-		// $path = sprintf("file:///%s", realpath("fixture/pass/pri.pem"));
+		$path = sprintf("file:///%s", realpath("fixture/pitsolu_next"));
 
-		// $keys = new KeyPair($path, "p@55w0rd");
+		$keys = new KeyPair($path, "p@55w0rd");
 
-		// $cipher = new Cipher($keys);
-		// $encrypted = $cipher->encrypt($this->message);
-		// $decrypted = $cipher->decrypt($encrypted);
+		$cipher = new Cipher($keys);
+		$encrypted = $cipher->encrypt($this->message);
+		$decrypted = $cipher->decrypt($encrypted);
 
-		// $this->assertEquals($this->message, $decrypted);
+		$this->assertEquals($this->message, $decrypted);
 	}
 }

@@ -25,7 +25,7 @@
 namespace Strukt\Ssl\Csr;
 
 use Strukt\Ssl\Config;
-use Strukt\Ssl\KeyPairContract;
+use Strukt\Contract\KeyPairInterface;
 use Strukt\Ssl\PrivateKey;
 use Strukt\Ssl\Csr\Csr as CsrRequest;
 
@@ -37,7 +37,7 @@ class CsrBuilder{
 	private $cert;
 	private $confList = null;
 
-	public function __construct(UniqueName $unique, KeyPairContract $keys, Config $conf = null){
+	public function __construct(UniqueName $unique, KeyPairInterface $keys, Config $conf = null){
 
 		$this->distgName = $unique->getDetails();
 		if(empty($this->distgName))

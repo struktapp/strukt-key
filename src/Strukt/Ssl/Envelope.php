@@ -4,22 +4,22 @@ namespace Strukt\Ssl;
 
 use Strukt\Raise;
 use Strukt\Ssl\PublicKey;
+use Strukt\Ssl\FixVector;
 
 class Envelope{
 
 	private $cipher;
 	private $iv;
 
-	public function __construct(string $cipher){
+	public function __construct(string $cipher, $iv){
 
 		$this->cipher = $cipher;
-		$ivlen = openssl_cipher_iv_length($cipher);
-		$this->iv = openssl_random_pseudo_bytes($ivlen);
+		$this->iv = $iv;
 	}
 
-	public static function withAlgo(string $cipher = "AES-128-CBC"){
+	public static function withAlgo($iv, string $cipher = "AES-128-CBC"){
 
-		return new self($cipher);
+		return new self($cipher, $iv);
 	}
 
 	public function useCerts(array $paths){
@@ -45,9 +45,8 @@ class Envelope{
 
 				$pubKeys = $this->pubKeyLs->getKeys();
 
-				// if(!
-				openssl_seal($data, $sealed, $envKeys, $pubKeys, $this->cipher, $this->iv);//)
-					// new Raise("Unable to seal message!");
+				if(!openssl_seal($data, $sealed, $envKeys, $pubKeys, $this->cipher, $this->iv))
+					new Raise("Unable to seal message!");
 
 				$this->pubKeyLs->freeAll();
 
@@ -62,7 +61,7 @@ class Envelope{
 
 	public function usePrivKey(PrivateKey $privKey){
 
-		$resource = $privKey->getResource();
+		$resource = $privKey->getKey();
 
 		return new class($resource, $this->cipher, $this->iv){
 
@@ -79,15 +78,12 @@ class Envelope{
 
 			public function open($envKey, $sealed){
 
-				$envKey = base64_decode($envKey);
-				$sealed = base64_decode($sealed);
 
-				// if(!
-					openssl_open($sealed, $open, $envKey, 
+				if(!openssl_open($sealed, $open, $envKey, 
 								$this->resource, 
 								$this->cipher, 
-								$this->iv);//)
-					// new Raise("Unable to open message!");
+								$this->iv))
+					new Raise("Unable to open message!");
 
 				return $open;
 			}
@@ -103,12 +99,14 @@ class Envelope{
 	// 	return array($envKeys, $sealed);
 	// }
 
-	// public static function closeAllWith(PublicKeyList $pubKeyList, $data){
+	public static function closeAllWith(PublicKeyList $pubKeyList, $data, string $cipher = "AES-128-CBC"){
 
-	// 	$pubKeys = $pubKeyList->getKeys();
+		$pubKeys = $pubKeyList->getKeys();
 
-	// 	openssl_seal($data, $sealed, $envKeys, $pubKeys);
+		$iv = FixVector::make($cipher);
 
-	// 	return array($envKeys, $sealed);
-	// }
+		openssl_seal($data, $sealed, $envKeys, $pubKeys, cipher_algo:$cipher, iv:$iv);
+
+		return array($envKeys, $sealed, $iv);
+	}
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Strukt\Ssl;
+namespace Strukt\Contract;
 
-interface KeyPairContract{
+interface KeyPairInterface{
 
 	public function getPrivateKey();
 	public function getPublicKey();

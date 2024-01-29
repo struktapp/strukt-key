@@ -2,6 +2,8 @@
 
 namespace Strukt\Ssl;
 
+use Strukt\Contract\AbstractKeyPair;
+
 class KeyPair extends AbstractKeyPair{
 
 	public function __construct($keyOrPemFile, $pass=""){	

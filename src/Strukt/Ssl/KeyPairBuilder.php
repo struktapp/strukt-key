@@ -2,7 +2,9 @@
 
 namespace Strukt\Ssl;
 
-class KeyPairBuilder extends AbstractKeyPair implements KeyPairContract{
+use Strukt\Contract\AbstractKeyPair;
+
+class KeyPairBuilder extends AbstractKeyPair{
 
 	public function __construct(Config $conf = null, $pass = ""){
 
