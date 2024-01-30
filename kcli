@@ -3,7 +3,7 @@
 
 require("bootstrap.php");
 
-$app = new Strukt\Console\Application("Strukt Ssl");
+$app = new Strukt\Console\Application("Strukt Key");
 $app->add(new Strukt\Console\Command\KeyPairGenerate);
 $app->add(new Strukt\Console\Command\Encrypt);
 $app->add(new Strukt\Console\Command\Decrypt);
@@ -13,4 +13,5 @@ $app->add(new Strukt\Console\Command\CertificateVerify);
 $app->add(new Strukt\Console\Command\CertificateExtractPublicKey);
 $app->add(new Strukt\Console\Command\DumpCfg);
 $app->add(new Strukt\Console\Command\Sha);
+$app->add(new Strukt\Console\Command\MakeKeys);
 exit($app->run($_SERVER["argv"]));

@@ -11,7 +11,7 @@
     ],
     "require": {
 
-    	"php": ">=7.0",
+    	"php": "^8.1",
         "ext-openssl": "*",
 		"strukt/commons": "v1.1.1-alpha",
 		"symfony/http-foundation": "^4.2",
@@ -22,8 +22,9 @@
         "psr-0": {
 
             "Strukt\\": "src/"
-        }
+        },
+        "files":["src/helpers.php"]
     },
-    "bin":["console"],
+    "bin":["kcli"],
     "minimum-stability":"dev"
 }
