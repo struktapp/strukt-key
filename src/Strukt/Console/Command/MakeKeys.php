@@ -16,10 +16,30 @@ class MakeKeys extends \Strukt\Console\Command{
 		$cipher = "AES-128-CBC";
 		$key = sha1(rand());
 
-		fs()->mkdir("cfg");
-		fs("cfg")->overwrite("crypt.ini", "vector = ${vector}
+		try{
+
+			$root_dir = env("root_dir");
+			$cfg_dir = sprintf("%s/cfg", $root_dir);
+
+		}
+		catch(\Exception $e){
+
+			$root_dir = "./";
+			$cfg_dir = "./cfg";
+		}
+
+$ini_data = "vector = ${vector}
 algo = ${cipher}
-key = ${key}");
+key = ${key}";
+
+		fs($root_dir)->mkdir("cfg");
+		$ini_exists = fs($cfg_dir)->isPath("crypt.ini");
+
+		if(!$ini_exists)
+			fs($cfg_dir)->touchWrite("crypt.ini", $ini_data);
+
+		if($ini_exists)
+			fs($cfg_dir)->overwrite("crypt.ini", $ini_data);
 
 		$out->add("cfg/crypt.ini was created!");
 	}
