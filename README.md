@@ -80,7 +80,7 @@ $enc = Strukt\Ssl\All::useKeys($p)->toSend($message);
 $p = new Strukt\Ssl\KeyPair($path, "p@55w0rd");
 $p->getPublicKey()//trigger public key extraction from private key
 
-$enc = Strukt\Ssl\All::useKeys($p)
+$k = Strukt\Ssl\All::useKeys($p)
 ```
 
 ## Certificate Signing Request (CSR)
