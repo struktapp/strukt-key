@@ -6,12 +6,15 @@ use Strukt\Contract\AbstractKeyPair;
 
 class KeyPair extends AbstractKeyPair{
 
-	public function __construct($keyOrPemFile, $pass=""){	
+	public function __construct($keyOrPemFile="", $pass=""){	
 		
-		if($this->expectsPassword($keyOrPemFile) && empty(trim($pass)))
-			throw new \Exception("Private key expects a password!");
+		if(!empty($keyOrPemFile)){
 
-		$this->privateKey = PrivateKeyBuilder::fromPem($keyOrPemFile, $pass);
+			if($this->expectsPassword($keyOrPemFile) && empty(trim($pass)))
+				throw new \Exception("Private key expects a password!");
+
+			$this->privateKey = PrivateKeyBuilder::fromPem($keyOrPemFile, $pass);
+		}
 	}
 
 	public function expectsPassword($contents){

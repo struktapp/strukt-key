@@ -11,7 +11,7 @@ Create `composer.json` script with contents below then run `composer update`
 {
     "require":{
 
-        "strukt/key":"dev-master"
+        "strukt/key":"v1.1.0-alpha"
     },
     "minimum-stability":"dev"
 }
@@ -22,35 +22,39 @@ Create `composer.json` script with contents below then run `composer update`
 ### Bcrypt
 
 ```php
-$bcrypt = new Strukt\Hash\Bcrypt(12);
-$hash = $bcrypt->makeHash('p@55w0rd');
-$bcrypt->verify('p@55w0rd', $hash);
+$hash = bcry("p@55w0rd")->encode()
+$success = bcry("p@55w0rd")->verify($hash);
 ```
 
 ### Sha256 (Doubled)
 
 ```php
-$hash = Strukt\Hash\Sha::dbl256('p@55w0rd');
+$hash = sha256dbl('p@55w0rd');
 ```
 
 ## Public & Private Keys
 
-### Generate Keys
+## Auto generate keys
+
+```php
+$k = Strukt\Ssl\All::makeKeys()
+$k->getKeys()->getPrivateKey()->getPem()//get private key
+$k->getKeys()->getPublicKey()->getPem()//get public key
+$c = $k->useCipher()
+$enc = $c->encrypt("p@55w0rd")
+$dec = $c->decrypt($enc)
+```
+
+### Use existing key
+
+You can generate your key via `ssh-keygen` if you wantta.
 
 ```php
 $file = "file:///home/churchill/.ssh/id_rsa"
-// $keys = new Strukt\Ssl\KeyPair($file, "p@55w0rd");
-$keys = new Strukt\Ssl\KeyPair($file);
-$pubKey = $keys->getPublicKey();// Strukt\Ssl\PublicKey
-$privKey = $keys->getPrivateKey();// Strukt\Ssl\PrivateKey
-
-
-$builder = new Strukt\Ssl\KeyPairBuilder(new Strukt\Ssl\Config());
-$pubKey = $builder->getPublicKey();// Strukt\Ssl\PublicKey
-$privKey = $builder->getPrivateKey();// Strukt\Ssl\PrivateKey
+$k = Strukt\Ssl\All::keyPath($file)
 ```
 
-### Encryp & Decrypt
+### Encrypt message with public key
 
 ```php
 $message = "Hi! My name is (what?)
@@ -62,32 +66,34 @@ My name is (what?)
 My name is
 Slim Shady";
 
-$encrypted = Strukt\Ssl\Cipher::encryptWith($builder->getPublicKey(), $message);
+$file = "file:///home/churchill/.ssh/id_rsa.pub"
 
-$cipher = new Strukt\Ssl\Cipher($builder);
-$decrypted = $cipher->decrypt($encrypted);
+$p = new Strukt\Ssl\KeyPair();//No private key
+$p->setPublicKey($file);
 
-$builder->freeKey();
+$enc = Strukt\Ssl\All::useKeys($p)->toSend($message);
+```
+
+### Encrypt with password
+
+```php
+$p = new Strukt\Ssl\KeyPair($path, "p@55w0rd");
+$p->getPublicKey()//trigger public key extraction from private key
+
+$enc = Strukt\Ssl\All::useKeys($p)
 ```
 
 ## Certificate Signing Request (CSR)
 
-### Self Signed CSR
-
-Generate or get a self signed certificate
+### Sign & verify certificate
 
 ```php
-$distgName = new Strukt\Ssl\Csr\UniqueName(["common"=>"test"]);
-$conf = new Strukt\Ssl\Config();
+$kpath = "file:///home/churchill/.ssh/id_rsa"
+$cpath = "file:///home/churchill/.ssh/cacert.pem"
 
-$keyBuilder = new Strukt\Ssl\KeyPairBuilder($conf);
-$csrBuilder = new Strukt\Ssl\Csr\CsrBuilder($distgName, $keyBuilder, $conf);
+$oCsr = Strukt\Ssl\All::keyPath($kpath)->withCert($cpath);
 
-$request = $csrBuilder->getCsr(); //Strukt\Ssl\Csr\Csr
+$cert = $oCsr->sign();
 
-$privKey = $keyBuilder->getPrivateKey(); //Strukt\Ssl\PrivateKey
-
-$cert = $privKey->getSelfSignedCert($request); //string
-
-Strukt\Ssl\Csr\Csr::verifyCert($privKey, $cert);//boolean
+$success = $oCsr->verify($cert);
 ```

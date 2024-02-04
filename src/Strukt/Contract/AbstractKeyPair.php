@@ -2,6 +2,8 @@
 
 namespace Strukt\Contract;
 
+use Strukt\Ssl\PublicKey;
+
 abstract class AbstractKeyPair implements KeyPairInterface{
 
 	protected $privateKey;
@@ -14,7 +16,15 @@ abstract class AbstractKeyPair implements KeyPairInterface{
 
 	public function getPublicKey(){
 
-		return $this->privateKey->getPublicKey();
+		if(empty($this->publicKey))
+			$this->publicKey = $this->privateKey->getPublicKey();
+
+		return $this->publicKey;
+	}
+
+	public function setPublicKey(string $key){
+
+		$this->publicKey = PublicKey::fromPem($key);
 	}
 
 	public function freeKey(){
