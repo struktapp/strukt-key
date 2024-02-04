@@ -1,4 +1,4 @@
-Crypt
+Strukt-Key
 =====
 
 ## Installation
