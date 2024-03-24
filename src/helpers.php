@@ -72,3 +72,72 @@ if(helper_add("sha256dbl")){
 		return Strukt\Hash\Sha::dbl256($whatever);
 	}
 }
+
+if(helper_add("csrf")){
+
+	function csrf(array|string $data){
+
+		return new class($data){
+
+			public function __construct(array|string $data){
+
+				$this->data = $data;
+			}
+
+			public function decode(){
+
+				if(is_string($this->data))
+					return Strukt\Csrf::decode($this->data);
+
+				return null;
+			}
+
+			public function valid(){
+
+				if(is_string($this->data))
+					return Strukt\Csrf::valid($this->data);
+
+				return false;
+			}
+
+			public function encode(){
+
+				return (string) Strukt\Csrf::make($this->data, config("csrf.duration"));
+			}
+		};
+	}
+}
+
+if(helper_add("jwt")){
+
+	function jwt(array|string $data){
+
+		$jwt = new Strukt\Jwt;
+		if(is_array($data))
+			return $jwt->encode($data);
+
+		if(is_string($data))
+			return new class($jwt->decode($data)){
+
+				private $data;
+
+				public function __construct(?stdClass $data){
+
+					$this->data = $data;
+				}
+
+				public function valid():bool{
+
+					if(is_null($this->data))
+						return false;
+					
+					return \Strukt\Jwt::valid($this->data);
+				}
+
+				public function yield():stdClass{
+
+					return $this->data;
+				}
+			};
+	}
+}
