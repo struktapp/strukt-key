@@ -66,6 +66,7 @@ class All{
 		return new class($iv, $privKey){
 
 			private $privKey;
+			private $iv;
 
 			public function __construct($iv, $privKey){
 
@@ -141,6 +142,7 @@ class All{
 			private $keys;
 			private $csrb;
 			private $csr;
+			private $cert;
 
 			public function __construct($distgName, $keys, $config){
 
@@ -192,6 +194,7 @@ class All{
 		return new class($this->keys){
 
 			private $keys;
+			private $cipher;
 
 			public function __construct($keys){
 

@@ -32,7 +32,7 @@ class PublicKeyList{
 
 	public function freeAll(){
 
-		foreach($this->keys as $key)
-			openssl_free_key($key->getResource());
+		// foreach($this->keys as $key)
+			// openssl_free_key($key->getResource());
 	}
 }

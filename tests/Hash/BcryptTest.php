@@ -5,6 +5,8 @@ use PHPUnit\Framework\TestCase;
 
 class BcryptTest extends TestCase{
 
+	private $bcrypt;
+
 	public function setUp():void{
 
 		$this->bcrypt = new Bcrypt(16);

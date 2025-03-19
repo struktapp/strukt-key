@@ -5,6 +5,7 @@ namespace Strukt\Ssl\Csr;
 class UniqueName{
 
 	private $distgName;
+	protected $keys;
 
 	public function __construct(Array $names){
 
