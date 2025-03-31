@@ -37,7 +37,12 @@ class CsrBuilder{
 	private $cert;
 	private $confList = null;
 
-	public function __construct(UniqueName $unique, KeyPairInterface $keys, Config $conf = null){
+	/**
+	 * @param \Strukt\Ssl\Csr\UniqueName $unique
+	 * @param \Strukt\Contract\KeyPairInterface $keys
+	 * @param ?\Strukt\Ssl\Config $conf
+	 */
+	public function __construct(UniqueName $unique, KeyPairInterface $keys, ?Config $conf = null){
 
 		$this->distgName = $unique->getDetails();
 		if(empty($this->distgName))
@@ -53,6 +58,9 @@ class CsrBuilder{
 		$this->csr = openssl_csr_new($this->distgName, $privKeyRes, $this->confList);
 	}
 
+	/**
+	 * @return \Strukt\Ssl\Csr\Csr
+	 */
 	public function getCsr():CsrRequest{
 
 		return new CsrRequest($this->csr);

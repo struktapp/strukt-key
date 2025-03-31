@@ -4,7 +4,13 @@ namespace Strukt\Ssl;
 
 class PrivateKeyBuilder{
 
-	public static function fromPem($keyOrPemFile, $pass = ""):PrivateKey{
+	/**
+	 * @param keyOrPemFile
+	 * @param string $pass
+	 * 
+	 * @return \Strukt\Ssl\PrivateKey
+	 */
+	public static function fromPem($keyOrPemFile, string $pass = ""):PrivateKey{
 
 		$key = new PrivateKey(openssl_pkey_get_private($keyOrPemFile, $pass));
 
@@ -14,7 +20,13 @@ class PrivateKeyBuilder{
 		return $key;
 	}
 
-	public static function fromConfig(Config $conf, $pass = null):PrivateKey{
+	/**
+	 * @param \Strukt\Ssl\Config $conf
+	 * @param ?string $pass
+	 * 
+	 * @return \Strukt\Ssl\PrivateKey
+	 */
+	public static function fromConfig(Config $conf, ?string $pass = null):PrivateKey{
 
 		$confList = $conf->getAll();
 

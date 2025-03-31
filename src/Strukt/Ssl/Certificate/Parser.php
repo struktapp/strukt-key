@@ -3,13 +3,17 @@
 namespace Strukt\Ssl\Certificate;
 
 use Strukt\Builder\Collection as CollectionBuilder;
+use OpenSSLCertificate as SslCert;
 
 class Parser{
 
 	private $cert;
 	private $fingerprint;
 
-	public function __construct(\OpenSSLCertificate $res){
+	/**
+	 * @param \OpenSSLCertificate $res
+	 */
+	public function __construct(SslCert|string $res){
 
 		// if(!is_resource($res))
 			// throw new \Exception("Certificate parser requires resource!");
@@ -35,6 +39,9 @@ class Parser{
 		return $this->cert->get("signatureTypeSN");
 	}
 
+	/**
+	 * @return \DateTime
+	 */
 	public function getFromDate(){
 
 		$from = new \DateTime();
@@ -43,7 +50,10 @@ class Parser{
 		return $from;	
 	}
 
-	public function getToDate(){
+	/**
+	 * @return \DateTime
+	 */
+	public function getToDate():\DateTime{
 
 		$to = new \DateTime();
 		$to->setTimestamp($this->cert->get("validTo_time_t"));
@@ -51,22 +61,34 @@ class Parser{
 		return $to;		
 	}
 
-	public function isExpired(){
+	/**
+     * @return "true"|"false"
+     */
+	public function isExpired():string{
 
         return ["false","true"][$this->getToDate() < (new \DateTime())];
     }
 
-    public function isSelfSigned(){
+    /**
+     * @return "true"|"false"
+     */
+    public function isSelfSigned():string{
 
     	return ["false","true"][$this->getDomain() == $this->getIssuer()];
     }
 
-    public function isPreCertificate(){
+    /**
+     * @return "true"|"false"
+     */
+    public function isPreCertificate():string{
 
     	return ["false","true"][$this->cert->exists("extensions.ct_precert_poison")];
     }
 
-    public function getFingerPrint(){
+    /**
+     * @return string|false
+     */
+    public function getFingerPrint():string|false{
 
     	return $this->fingerprint;
     }

@@ -9,11 +9,17 @@ abstract class AbstractKeyPair implements KeyPairInterface{
 	protected $privateKey;
 	protected $publicKey;
 
+	/**
+	 * @return \Strukt\Ssl\PrivateKey
+	 */
 	public function getPrivateKey(){
 
 		return $this->privateKey;
 	}
 
+	/**
+	 * @return \Strukt\Ssl\PublicKey
+	 */
 	public function getPublicKey(){
 
 		if(empty($this->publicKey))
@@ -22,7 +28,12 @@ abstract class AbstractKeyPair implements KeyPairInterface{
 		return $this->publicKey;
 	}
 
-	public function setPublicKey(string $key){
+	/**
+	 * @param string $key
+	 * 
+	 * @return void
+	 */
+	public function setPublicKey(string $key):void{
 
 		$this->publicKey = PublicKey::fromPem($key);
 	}

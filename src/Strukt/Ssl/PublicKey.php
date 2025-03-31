@@ -2,11 +2,16 @@
 
 namespace Strukt\Ssl;
 
+use OpenSSLAsymmetricKey as SslAsymKey;
+
 class PublicKey{
 
 	private $res;
 
-	public function __construct(\OpenSSLAsymmetricKey $res){
+	/**
+	 * @param OpenSSLAsymmetricKey $res
+	 */
+	public function __construct(SslAsymKey $res){
 
 		// if(!is_resource($res))
 			// throw new \Exception("Is not resource!");
@@ -14,32 +19,56 @@ class PublicKey{
 		$this->res = $res;
 	}
 
-	public static function fromPrivateKeyPem($data){
+	/**
+	 * @param mixed $data
+	 * 
+	 * @return static
+	 */
+	public static function fromPrivateKeyPem(mixed $data):static{
 
 		return static::fromPrivateKey(openssl_pkey_get_private($data)['key']);
 	}
 
-	public static function fromPrivateKey($res){
+	/**
+	 * @return OpenSSLAsymmetricKey $res
+	 * 
+	 * @return static
+	 */
+	public static function fromPrivateKey(SslAsymKey $res):static{
 
 		return static::fromPem(openssl_pkey_get_details($res)['key']);
 	}
 
-	public static function fromPem($key){
+	/**
+	 * @param mixed $key
+	 * 
+	 * @return static
+	 */
+	public static function fromPem(mixed $key):static{
 
 		return new self(openssl_get_publickey($key));
 	}
 
-	public function getResource(){
+	/**
+	 * @return OpenSSLAsymmetricKey
+	 */
+	public function getResource():SslAsymKey{
 
 		return $this->res;
 	}
 
-	public function getKey(){
+	/**
+	 * @return array|false
+	 */
+	public function getKey():array|false{
 
 		return openssl_pkey_get_details($this->res);
 	}
 
-	public function getPem(){
+	/**
+	 * @return string
+	 */
+	public function getPem():string{
 
 		$pubKeyDetails = $this->getKey();
 

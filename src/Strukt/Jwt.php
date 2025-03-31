@@ -31,8 +31,12 @@ class Jwt{
         $this->secrect = config("jwt.secret");
     }
 
-    public function encode($data)
-    {
+    /**
+     * @param string|array $data
+     * 
+     * @return string
+     */
+    public function encode(string|array $data):string{
 
         $token = array(
             //Adding the identifier to the token (who issue the token)
@@ -49,8 +53,13 @@ class Jwt{
         return FireJWT::encode($token, $this->secrect, config("jwt.algo"));
     }
 
-    public function decode($token)
-    {
+    /**
+     * @param string $token
+     * 
+     * @return array|string|null
+     */
+    public function decode(string $token):array|string|null{
+        
         try {
 
             $decode = FireJWT::decode($token, new Key($this->secrect, config("jwt.algo")));
@@ -67,6 +76,11 @@ class Jwt{
         }
     }
 
+    /**
+     * @param \stdClass $data
+     * 
+     * @return bool
+     */
     public static function valid(\stdClass $data):bool{
 
         return negate(when()->gt(when($data->exp)));

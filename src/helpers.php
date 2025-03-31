@@ -1,12 +1,25 @@
 <?php
 
+use Strukt\Hash\Bcrypt;
+use Strukt\Hash\Sha;
+use Strukt\Codec;
+use Strukt\Csrf;
+use Strukt\Jwt;
+use Strukt\Ssl\Config;
+use Strukt\Ssl\All;
+
 helper("key");
 
 if(helper_add("codec")){
 
-	function codec(){
+	/**
+	 * @return object
+	 */
+	function codec():object{
 
 		return new class(){
+
+			private $codec;
 
 			public function __construct(){
 
@@ -14,15 +27,25 @@ if(helper_add("codec")){
 				$vector = hex2bin(config("crypt.vector"));
 				$key = config("crypt.key");
 
-				$this->codec = \Strukt\Codec::make($vector, $key, $cipher);
+				$this->codec = Codec::make($vector, $key, $cipher);
 			}
 
-			public function encode($data){
+			/**
+			 * @param string $data
+			 * 
+			 * @return mixed
+			 */
+			public function encode(string $data):mixed{
 
 				return $this->codec->encode($data);
 			}
 
-			public function decode($encrypted){
+			/**
+			 * @param string $encrypted
+			 * 
+			 * @return mixed
+			 */
+			public function decode(string $encrypted):mixed{
 
 				return $this->codec->decode($encrypted);
 			}
@@ -32,24 +55,42 @@ if(helper_add("codec")){
 
 if(helper_add("bcry")){
 
-	function bcry(string $password, int $rounds = 12){
+	/**
+	 * @param string $passwords
+	 * @param integer $rounds = 12
+	 * 
+	 * @return object
+	 */
+	function bcry(string $password, int $rounds = 12):object{
 
-		$hash_class = new Strukt\Hash\Bcrypt($rounds);
+		$hash_class = new Bcrypt($rounds);
 
 		return new class($hash_class, $password){
 
-			public function __construct($hash_class, string $password){
+			/**
+			 * @param \Strukt\Hash\Bcrypt $hash_class
+			 * @param string $password
+			 */
+			public function __construct(Bcrypt $hash_class, string $password){
 
 				$this->hash_class = $hash_class;
 				$this->password = $password;
 			}
 
-			public function encode(){
+			/**
+			 * @return string
+			 */
+			public function encode():string{
 
 				return $this->hash_class->makeHash($this->password);
 			}
 
-			public function verify(string $hash){
+			/**
+			 * @param string $hash
+			 * 
+			 * @return bool
+			 */
+			public function verify(string $hash):bool{
 
 				return $this->hash_class->verify($this->password, $hash);		
 			}
@@ -59,50 +100,77 @@ if(helper_add("bcry")){
 
 if(helper_add("sha256")){
 
-	function sha256(string $whatever){
+	/**
+	 * @param string $whatever
+	 * 
+	 * @return string
+	 */
+	function sha256(string $whatever):string{
 
-		return Strukt\Hash\Sha::once256($whatever);
+		return Sha::once256($whatever);
 	}
 }
 
 if(helper_add("sha256dbl")){
 
-	function sha256dbl(string $whatever){
+	/**
+	 * @param string $whatever
+	 * 
+	 * @return string
+	 */
+	function sha256dbl(string $whatever):string{
 
-		return Strukt\Hash\Sha::dbl256($whatever);
+		return Sha::dbl256($whatever);
 	}
 }
 
 if(helper_add("csrf")){
 
-	function csrf(array|string $data){
+	/**
+	 * @param array|string $data
+	 * 
+	 * @return object
+	 */
+	function csrf(array|string $data):object{
 
 		return new class($data){
 
+			/**
+			 * @param array|string $data
+			 */
 			public function __construct(array|string $data){
 
 				$this->data = $data;
 			}
 
-			public function decode(){
+			/**
+			 * @return string|false|null
+			 */
+			public function decode():string|false|null{
 
 				if(is_string($this->data))
-					return Strukt\Csrf::decode($this->data);
+					return Csrf::decode($this->data);
 
 				return null;
 			}
 
-			public function valid(){
+			/**
+			 * @return bool
+			 */
+			public function valid():bool{
 
 				if(is_string($this->data))
-					return Strukt\Csrf::valid($this->data);
+					return Csrf::valid($this->data);
 
 				return false;
 			}
 
-			public function encode(){
+			/**
+			 * @return string
+			 */
+			public function encode():string{
 
-				return (string) Strukt\Csrf::make($this->data, config("csrf.duration"));
+				return (string) Csrf::make($this->data, config("csrf.duration"));
 			}
 		};
 	}
@@ -110,9 +178,14 @@ if(helper_add("csrf")){
 
 if(helper_add("jwt")){
 
-	function jwt(array|string $data){
+	/**
+	 * @param array|string $data
+	 * 
+	 * @return string|object
+	 */
+	function jwt(array|string $data):string|object{
 
-		$jwt = new Strukt\Jwt;
+		$jwt = new Jwt;
 		if(is_array($data))
 			return $jwt->encode($data);
 
@@ -121,23 +194,61 @@ if(helper_add("jwt")){
 
 				private $data;
 
+				/**
+				 * ?stdClass $data
+				 */
 				public function __construct(?stdClass $data){
 
 					$this->data = $data;
 				}
 
+				/**
+				 * @return bool
+				 */
 				public function valid():bool{
 
 					if(is_null($this->data))
 						return false;
 					
-					return \Strukt\Jwt::valid($this->data);
+					return Jwt::valid($this->data);
 				}
 
+				/**
+				 * @return stdClass
+				 */
 				public function yield():stdClass{
 
 					return $this->data;
 				}
 			};
+	}
+}
+
+if(helper_add("ssl")){
+
+	/**
+	 * @param \Strukt\Ssl\Config|
+	 * 		  \Strukt\Ssl\All|
+	 * 		  \Strukt\Contract\KeyPairInterface|
+	 * 		  \Strukt\Ssl\KeyPair|string|null $keysOrPathOrCfg
+	 * 
+	 * @return \Strukt\Ssl\All
+	 */
+	function ssl(KeyPair|KeyPairInterface|Config|string|null $keysOrPathOrCfg = null):All{
+
+		if($keysOrPathOrCfg instanceof KeyPair)
+			return All::useKeys($keysOrPathOrCfg);
+
+		if($keysOrPathOrCfg instanceof KeyPairInterface)
+			return new All($keysOrPathOrCfg);
+
+		if($keysOrPathOrCfg instanceof Config)
+			return All::makeKeysByCfg($keysOrPathOrCfg);
+
+		if(is_string($keysOrPathOrCfg))
+			return All::keyPath($keysOrPathOrCfg);
+
+		if(is_null($keysOrPathOrCfg))
+			return All::makeKeys();
 	}
 }

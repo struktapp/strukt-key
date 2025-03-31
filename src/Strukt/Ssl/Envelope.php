@@ -4,6 +4,7 @@ namespace Strukt\Ssl;
 
 use Strukt\Raise;
 use Strukt\Ssl\PublicKey;
+use Strukt\Ssl\PrivateKey;
 use Strukt\Ssl\FixVector;
 
 class Envelope{
@@ -11,18 +12,33 @@ class Envelope{
 	private $cipher;
 	private $iv;
 
+	/**
+	 * @param string $cipher
+	 * @param $iv
+	 */
 	public function __construct(string $cipher, $iv){
 
 		$this->cipher = $cipher;
 		$this->iv = $iv;
 	}
 
-	public static function withAlgo($iv, string $cipher = "AES-128-CBC"){
+	/**
+	 * @param $iv
+	 * @param string $cipher
+	 * 
+	 * @return static
+	 */
+	public static function withAlgo($iv, string $cipher = "AES-128-CBC"):static{
 
 		return new self($cipher, $iv);
 	}
 
-	public function useCerts(array $paths){
+	/**
+	 * @param array $paths
+	 * 
+	 * @return object
+	 */
+	public function useCerts(array $paths):object{
 
 		$pubKeyLs = PublicKeyList::make();
 		foreach($paths as $path)
@@ -34,6 +50,11 @@ class Envelope{
 			private $cipher;
 			private $iv;
 
+			/**
+			 * @param \Strukt\Ssl\PublicKey $pubKeyLs
+			 * @param string $cipher
+			 * @param string $iv
+			 */
 			public function __construct(PublicKeyList $pubKeyLs, string $cipher, $iv){
 
 				$this->pubKeyLs = $pubKeyLs;
@@ -41,7 +62,12 @@ class Envelope{
 				$this->iv = $iv;
 			}
 
-			public function close(string $data){
+			/**
+			 * @param string $data
+			 * 
+			 * @return array
+			 */
+			public function close(string $data):array{
 
 				$pubKeys = $this->pubKeyLs->getKeys();
 
@@ -59,7 +85,12 @@ class Envelope{
 		};
 	}
 
-	public function usePrivKey(PrivateKey $privKey){
+	/**
+	 * @param \Strukt\Ssl\PrivateKey $privKey
+	 * 
+	 * @return object
+	 */
+	public function usePrivKey(PrivateKey $privKey):object{
 
 		$resource = $privKey->getKey();
 
@@ -69,6 +100,11 @@ class Envelope{
 			private $cipher;
 			private $iv;
 
+			/**
+			 * @param $resource - Private Key
+			 * @param string $cipher
+			 * @param string $iv
+			 */
 			public function __construct($resource, string $cipher, $iv){
 
 				$this->resource = $resource;
@@ -76,7 +112,13 @@ class Envelope{
 				$this->iv = $iv;
 			}
 
-			public function open($envKey, $sealed){
+			/**
+			 * @param string $envKey
+			 * @param string $sealed
+			 * 
+			 * @return mixed
+			 */
+			public function open(string $envKey, string $sealed):mixed{
 
 
 				if(!openssl_open($sealed, $open, $envKey, 
@@ -99,7 +141,16 @@ class Envelope{
 	// 	return array($envKeys, $sealed);
 	// }
 
-	public static function closeAllWith(PublicKeyList $pubKeyList, $data, string $cipher = "AES-128-CBC"){
+	/**
+	 * @param \Strukt\Ssl\PublicKeyList $pubKeyList
+	 * @param string $data
+	 * @param string $cipher
+	 * 
+	 * @return array
+	 */
+	public static function closeAllWith(PublicKeyList $pubKeyList, 
+											string $data, 
+											string $cipher = "AES-128-CBC"):array{
 
 		$pubKeys = $pubKeyList->getKeys();
 

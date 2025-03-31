@@ -7,7 +7,10 @@ class UniqueName{
 	private $distgName;
 	protected $keys;
 
-	public function __construct(Array $names){
+	/**
+	 * @param array $names
+	 */
+	public function __construct(array $names){
 
 		$this->keys = array(
 
@@ -25,12 +28,18 @@ class UniqueName{
 				$this->distgName[$key] = $names[$alias];
 	}
 
-	public function get($key){
+	/**
+	 * @param string $key
+	 */
+	public function get(string $key){
 
 		return $this->distgName[$this->keys[$key]];
 	}
 
-	public function getDetails(){
+	/**
+	 * @return array
+	 */
+	public function getDetails():array{
 
 		return $this->distgName;
 	}

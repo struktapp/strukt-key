@@ -8,7 +8,10 @@ class Downloader{
 
 	private $resource;
 
-	public function __construct($url){
+	/**
+	 * @param string $url
+	 */
+	public function __construct(string $url){
 
 		$url = new Str($url);
 		if($url->startsWith("https://") == false)
@@ -28,6 +31,9 @@ class Downloader{
 		$this->resource = ($context["options"]["ssl"]["peer_certificate"]);
 	}
 
+	/**
+	 * @return resource
+	 */
 	public function getResource(){
 
 		return $this->resource;

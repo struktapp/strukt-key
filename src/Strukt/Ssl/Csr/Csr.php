@@ -25,14 +25,18 @@
 namespace Strukt\Ssl\Csr;
 
 use Strukt\Ssl\PrivateKey;
+use OpenSSLCertificateSigningRequest as SslCsr;
+use OpenSSLCertificate as SslCert;
 
 class Csr{
 
 	private $csr;
 	private $cert;
 
-	// public function __construct($csr = null, $cert = null){
-	public function __construct($csr = null){
+	/**
+	 * @param \OpenSSLCertificateSigningRequest|string|null $csr
+	 */
+	public function __construct(SslCsr|string|null $csr = null){
 
 		$this->setCsr($csr);
 		// $this->setCert($cert);
@@ -43,7 +47,12 @@ class Csr{
 		return $this->csr;
 	}
 
-	public function setCsr($csr){
+	/**
+	 * @param \OpenSSLCertificateSigningRequest|string $csr
+	 * 
+	 * @return void
+	 */
+	public function setCsr(SslCsr|string $csr):void{
 
 		// if(!is_null($csr))
 		openssl_csr_export($csr, $this->csr);
@@ -54,45 +63,78 @@ class Csr{
 		return $this->cert;
 	}
 
-	// public function setCert($cert){
-	public function exportCert($cert){
+	/**
+	 * @param \OpenSSLCertificate|string $cert
+	 * 
+	 * @return void
+	 */
+	public function exportCert(\SslCert|string $cert):void{
 
 		// if(!is_null($cert))
-		openssl_x509_export($cert, $this->cert);
+		openssl_x509_export($cert, $this->cert); //returns bool
 	}
 
-	public function getSubject(){
+	/**
+	 * @return array|false
+	 */
+	public function getSubject():array|false{
 
 		$subject = openssl_csr_get_subject($this->csr);
 
 		return $subject;
 	}
 
-	public function parse(){
+	/**
+	 * @return array|false
+	 */
+	public function parse():array|false{
 
 		return self::parseCert($this->cert);
 	}
 
+	/**
+	 * @param \Strukt\Ssl\PrivateKey $privKey
+	 * 
+	 * @return bool
+	 */
 	public function verifyWith(PrivateKey $privKey):bool{
 
 		return self::verifyCert($privKey, $this->cert);
 	}
 
-	public static function parseCert($cert){
+	/**
+	 * @param OpenSSLCertificate|string $cert
+	 * 
+	 * @return array|false
+	 */
+	public static function parseCert(SslCert|string $cert):array|false{
 
 		$cert = openssl_x509_parse($cert);
 
 		return $cert;
 	}
 
-	public static function verifyCert(PrivateKey $privKey, $cert){
+	/**
+	 * @param \Strukt\Ssl\PrivateKey $privKey
+	 * @param \OpenSSLCertificate|string $cert
+	 * 
+	 * @return bool
+	 */
+	public static function verifyCert(PrivateKey $privKey, SslCert|string $cert):bool{
 
 		$privKey = $privKey->getPem();
 
 		return openssl_x509_check_private_key($cert, $privKey);
 	}
 
-	public static function sign(Csr $request, PrivateKey $privKey, array $settings = null){
+	/**
+	 * @param \Strukt\Ssl\Csr\Csr $request
+	 * @param \Strukt\Ssl\PrivateKey $privKey
+	 * @param ?array $settings
+	 * 
+	 * @return \OpenSSLCertificate|false
+	 */
+	public static function sign(Csr $request, PrivateKey $privKey, ?array $settings = null):SslCert|false{
 
 		$privKeyRes = $privKey->getKey();
 

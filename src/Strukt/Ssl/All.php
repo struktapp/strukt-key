@@ -12,39 +12,58 @@ use Strukt\Ssl\Cipher;
 use Strukt\Ssl\Csr\CsrBuilder;
 use Strukt\Ssl\Csr\Csr;
 use Strukt\Ssl\Csr\UniqueName;
+use Strukt\Ssl\PrivateKey;
+use OpenSSLCertificate as SslCert;
 
 class All{
 
 	private $keys;
 	private static $config;
 
+	/**
+	 * @param \Strukt\Contract\KeyPairInterface $keys
+	 */
 	public function __construct(KeyPairInterface $keys){
 
 		$this->keys = $keys;
 	}
 
-	public static function makeKeys(){
+	/**
+	 * @return static
+	 */
+	public static function makeKeys():static{
 
 		return new self(new KeyPairBuilder());
 	}
 
-	public static function useKeys(KeyPair $keys){
+	/**
+	* @param \Strukt\Ssl\KeyPair $keys - Private Key Path
+	* 
+	* @return static
+	*/
+	public static function useKeys(KeyPair $keys):static{
 
 		return new self($keys);
 	}
 
-
 	/**
 	* Generate keys from private key
 	*
-	* @param $path Private Key Path
+	* @param string $path - Private Key Path
+	* 
+	* @return static
 	*/
-	public static function keyPath(string $path){
+	public static function keyPath(string $path):static{
 
 		return static::useKeys(new KeyPair($path));
 	}
 
-	public static function makeKeysByCfg(Config $config = null){
+	/**
+	 * @param ?\Strukt\Ssl\Config $config
+	 * 
+	 * @return static
+	 */
+	public static function makeKeysByCfg(?Config $config = null):static{
 
 		if(is_null($config))
 			static::$config = new Config;
@@ -52,6 +71,9 @@ class All{
 		return new self(new KeyPairBuilder(static::$config));
 	}
 
+	/**
+	 * @return \Strukt\Contract\KeyPairInterface
+	 */
 	public function getKeys():KeyPairInterface{
 
 		return $this->keys;
@@ -59,27 +81,47 @@ class All{
 
 	/**
 	* Envelope
+	* 
+	* @param $iv
+	* @param ?\Strukt\Ssl\PrivateKey $privKey
+	* 
+	* @return object
 	*/
-	public static function withEnvl($iv, PrivateKey $privKey = null){
-
+	public static function withEnvl($iv, ?PrivateKey $privKey = null){
 
 		return new class($iv, $privKey){
 
 			private $privKey;
 			private $iv;
 
+			/**
+			 * @param $iv
+			 * @param ?\Strukt\Ssl\PrivateKey $privKey
+			 */
 			public function __construct($iv, $privKey){
 
 				$this->privKey = $privKey;
 				$this->iv = $iv;
 			}
 
-			public function close(array $paths, string $message){
+			/**
+			 * @param array $paths
+			 * @param string $message
+			 * 
+			 * @return array
+			 */
+			public function close(array $paths, string $message):array{
 
 				return Envelope::withAlgo($this->iv)->useCerts($paths)->close($message);
 			}
 
-			public function open($envKey, $sealed){
+			/**
+			 * @param string $envKey
+			 * @param string $sealed
+			 * 
+			 * @return mixed
+			 */
+			public function open(string $envKey, string $sealed):mixed{
 
 				return Envelope::withAlgo($this->iv)->usePrivKey($this->privKey)->open($envKey, $sealed);
 			}
@@ -101,7 +143,12 @@ class All{
 			private $keys;
 			private $oCsr;
 
-			public function __construct($oCsr, $request, $keys){
+			/**
+			 * @param object $oCsr
+			 * @param \Strukt\Ssl\Csr\Csr $request
+			 * @param \Strukt\Contract\KeyPairInterface $keys
+			 */
+			public function __construct(object $oCsr, Csr $request, KeyPairInterface $keys){
 
 				$this->request = $request;
 				$this->keys = $keys;
@@ -113,14 +160,22 @@ class All{
 				return $this->request->getCert();
 			}
 
-			public function sign(){
+			/**
+			 * @return \OpenSSLCertificate|false
+			 */
+			public function sign():SslCert|false{
 
 				$cert = Csr::sign($this->request, $this->keys->getPrivateKey());
 
 				return $cert;
 			}
 
-			public function verify($cert = null){
+			/**
+			 * @param \OpenSSLCertificate|string $cert
+			 * 
+			 * @return bool
+			 */
+			public function verify(SslCert|string|null $cert = null):bool{
 
 				if(is_null($cert))
 					$cert = $this->getCert();
@@ -132,8 +187,12 @@ class All{
 
 	/**
 	* Cert
+	* 
+	* @param array $names
+	* 
+	* @return object
 	*/
-	public function useCsr(array $names = ["common"=>"test"]){
+	public function useCsr(array $names = ["common"=>"test"]):object{
 
 		$distgName = new UniqueName($names);
 
@@ -144,7 +203,12 @@ class All{
 			private $csr;
 			private $cert;
 
-			public function __construct($distgName, $keys, $config){
+			/**
+			 * @param \Strukt\Ssl\Csr\UniqueName $distgName
+			 * @param \Strukt\Contract'KeyPairInterface $keys
+			 * @param ?\Strukt\Ssl\Config $config
+			 */
+			public function __construct(UniqueName $distgName, KeyPairInterface $keys, ?Config $config){
 
 				$this->keys = $keys;
 
@@ -153,24 +217,36 @@ class All{
 				$this->csr = $this->csrb->getCsr();
 			}
 
-			public function getCsr(){
+			/**
+			 * @return \Strukt\Ssl\Csr\Csr
+			 */
+			public function getCsr():Csr{
 
 				return $this->csr;
 			}
 
-			public function getXCert(){
+			/**
+			 * @return \OpenSSLCertificate|false
+			 */
+			public function getXCert():SslCert|false{
 
 				return $this->cert;
 			}
 
-			public function getCert(){
+			/**
+			 * @return mixed
+			 */
+			public function getCert():mixed{
 
 				$this->csr->exportCert($this->getXCert());
 
 				return $this->csr->getCert();
 			}
 
-			public function selfSign(){
+			/**
+			 * @return static
+			 */
+			public function selfSign():static{
 
 				$prKey = $this->keys->getPrivateKey();
 
@@ -179,7 +255,12 @@ class All{
 				return $this;
 			}
 
-			public function verify($cert){
+			/**
+			 * @param OpenSSLCertificate|string $cert
+			 * 
+			 * @return bool
+			 */
+			public function verify(SslCert|string $cert):bool{
 
 				return Csr::verifyCert($this->keys->getPrivateKey(), $cert);
 			}
@@ -188,6 +269,8 @@ class All{
 
 	/**
 	* Cipher
+	* 
+	* @return object
 	*/
 	public function useCipher(){
 
@@ -196,17 +279,30 @@ class All{
 			private $keys;
 			private $cipher;
 
-			public function __construct($keys){
+			/**
+			 * @param Strukt\Contract\KeyPairInterface $keys
+			 */
+			public function __construct(KeyPairInterface $keys){
 
 				$this->cipher = new Cipher($keys);
 			}
 
-			public function encrypt(string $message){
+			/**
+			 * @param string $message
+			 * 
+			 * @return mixed
+			 */
+			public function encrypt(string $message):mixed{
 
 				return $this->cipher->encrypt($message);
 			}
 
-			public function decrypt($enc_msg){
+			/**
+			 * @param string $enc_msg
+			 * 
+			 * @return mixed
+			 */
+			public function decrypt(string $enc_msg):mixed{
 
 				return $this->cipher->decrypt($enc_msg);
 			}
@@ -215,8 +311,12 @@ class All{
 
 	/**
 	* Cipher
+	* 
+	* @param string $message
+	* 
+	* @return mixed
 	*/
-	public function toSend(string $message){
+	public function toSend(string $message):mixed{
 
 		return Cipher::encryptWith($this->keys->getPublicKey(), $message);
 	}

@@ -9,7 +9,10 @@ class Config{
 
 	private $config = array();
 
-	public function __construct(Array $config = []){
+	/**
+	 * @param array $config = []
+	 */
+	public function __construct(array $config = []){
 
 		$this->config = static::dump();
 		if(Fs::isFile("ssl.cfg.ini"))
@@ -21,7 +24,10 @@ class Config{
 		$this->config = array_merge($this->config, $config);
 	}
 
-	public static function dump(){
+	/**
+	 * @return array
+	 */
+	public static function dump():array{
 
 		return array(
 
@@ -35,7 +41,10 @@ class Config{
 		 );
 	}
 
-	public function getAll(){
+	/**
+	 * @return array
+	 */
+	public function getAll():array{
 
 		return $this->config;
 	}

@@ -4,6 +4,8 @@ namespace Strukt\Ssl;
 
 use Strukt\Ssl\Csr\Csr;
 use Strukt\Fs;
+use OpenSSLCertificate as SslCert;
+use OpenSSLAsymmetricKey as SslAsymKey;
 
 class PrivateKey{
 
@@ -11,7 +13,10 @@ class PrivateKey{
 	private $pass = null;
 	private $conf = null;
 
-	public function __construct(\OpenSSLAsymmetricKey $res){
+	/**
+	 * @param \OpenSSLAsymmetricKey $res
+	 */
+	public function __construct(SslAsymKey $res){
 
 		// if(!is_resource($res))
 			// throw new \Exception("Is not a resource!");
@@ -19,37 +24,62 @@ class PrivateKey{
 		$this->res = $res;
 	}
 
-	public static function fromPath(string $path){
+	/**
+	 * @param string $path
+	 * 
+	 * @return static
+	 */
+	public static function fromPath(string $path):static{
 
 		$pem_private_key = Fs::cat($path);
 
 		return new self(openssl_pkey_get_private($pem_private_key));
 	}
 
-	public static function fromPem($data){
+	/**
+	 * @param mixed $data
+	 * 
+	 * @return static
+	 */
+	public static function fromPem(mixed $data):static{
 
 		return new self(openssl_pkey_get_private($data));
 	}
 
-	public function getKey(){
+	/**
+	 * @return \OpenSSLAsymmetricKey
+	 */
+	public function getKey():SslAsymKey{
 
 		return $this->res;
 	}
 
-	public function withConf(Config $conf){
+	/**
+	 * @param \Strukt\Ssl\Config $conf
+	 * 
+	 * @return static
+	 */
+	public function withConf(Config $conf):static{
 
 		$this->conf = $conf;
 
 		return $this;
 	}
 
-
+	/**
+	 * @return \Strukt\Ssl\Config
+	 */
 	public function getConf(){
 
 		return $this->conf;
 	}
 
-	public function withPass($pass){
+	/**
+	 * @param string $pass
+	 * 
+	 * @return static
+	 */
+	public function withPass(string $pass):static{
 
 		$this->pass = $pass;
 
@@ -58,8 +88,10 @@ class PrivateKey{
 
 	/**
 	* Extract the private key from $res to $privKey
+	* 
+	* @return mixed
 	*/
-	public function getPem(){
+	public function getPem():mixed{
 
 		$confList = null;
 		if(!is_null($this->conf))
@@ -70,15 +102,23 @@ class PrivateKey{
 		return $priKey;
 	}
 
-	public function getPublicKey(){
+	/**
+	 * @return \Strukt\Ssl\PublicKey
+	 */
+	public function getPublicKey():PublicKey{
 
 		return PublicKey::fromPrivateKey($this->getKey());
 	}
 
 	/**
 	 * self signing
+	 * 
+	 * @param \Strukt\Ssl\Csr\Csr $request
+	 * @param integer $days = 365
+	 * 
+	 * @return \OpenSSLCertificate|false
 	 */
-	public function getSelfSignedCert(Csr $request, $days=365){
+	public function getSelfSignedCert(Csr $request, int $days=365):SslCert|false{
 
 		$confList = null;
 		if(!is_null($this->conf))

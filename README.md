@@ -37,7 +37,8 @@ $hash = sha256dbl('p@55w0rd');
 ## Auto generate keys
 
 ```php
-$k = Strukt\Ssl\All::makeKeys()
+// $k = Strukt\Ssl\All::makeKeys()
+$k = ssl()
 $k->getKeys()->getPrivateKey()->getPem()//get private key
 $k->getKeys()->getPublicKey()->getPem()//get public key
 $c = $k->useCipher()
@@ -51,7 +52,8 @@ You can generate your key via `ssh-keygen` if you wantta.
 
 ```php
 $file = "file:///home/churchill/.ssh/id_rsa"
-$k = Strukt\Ssl\All::keyPath($file)
+// $k = Strukt\Ssl\All::keyPath($file)
+$k = ssl($file)
 ```
 
 ### Encrypt message with public key
@@ -71,7 +73,8 @@ $file = "file:///home/churchill/.ssh/id_rsa.pub"
 $p = new Strukt\Ssl\KeyPair();//No private key
 $p->setPublicKey($file);
 
-$enc = Strukt\Ssl\All::useKeys($p)->toSend($message);
+// $enc = Strukt\Ssl\All::useKeys($p)->toSend($message);
+$enc = ssl($p)->toSend($message);
 ```
 
 ### Encrypt with password
@@ -80,7 +83,8 @@ $enc = Strukt\Ssl\All::useKeys($p)->toSend($message);
 $p = new Strukt\Ssl\KeyPair($path, "p@55w0rd");
 $p->getPublicKey()//trigger public key extraction from private key
 
-$k = Strukt\Ssl\All::useKeys($p)
+// $k = Strukt\Ssl\All::useKeys($p)
+$k = ssl($p);
 ```
 
 ## Certificate Signing Request (CSR)
@@ -91,9 +95,8 @@ $k = Strukt\Ssl\All::useKeys($p)
 $kpath = "file:///home/churchill/.ssh/id_rsa"
 $cpath = "file:///home/churchill/.ssh/cacert.pem"
 
-$oCsr = Strukt\Ssl\All::keyPath($kpath)->withCert($cpath);
-
+// $oCsr = Strukt\Ssl\All::keyPath($kpath)->withCert($cpath);
+$oCsr = ssl($kpath)->withCert($cpath);
 $cert = $oCsr->sign();
-
 $success = $oCsr->verify($cert);
 ```

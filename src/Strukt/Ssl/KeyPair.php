@@ -6,7 +6,11 @@ use Strukt\Contract\AbstractKeyPair;
 
 class KeyPair extends AbstractKeyPair{
 
-	public function __construct($keyOrPemFile="", $pass=""){	
+	/**
+	 * @param mixed $keyOrPemFile
+	 * @param string $pass = ""
+	 */
+	public function __construct(mixed $keyOrPemFile="", string $pass=""){	
 		
 		if(!empty($keyOrPemFile)){
 
@@ -17,7 +21,12 @@ class KeyPair extends AbstractKeyPair{
 		}
 	}
 
-	public function expectsPassword($contents){
+	/**
+	 * @param string $contents
+	 * 
+	 * @return bool
+	 */
+	public function expectsPassword(string $contents):bool{
 
 		if(strpos($contents, 'file:///') !== false)
 			$contents = file_get_contents($contents);		

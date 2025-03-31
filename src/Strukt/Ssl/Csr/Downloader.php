@@ -6,7 +6,10 @@ class Downloader{
 
 	private $var;
 
-	public function __construct($url){
+	/**
+	 * @param string $url
+	 */
+	public function __construct(string $url){
 
 		$stream = stream_context_create(array(
 

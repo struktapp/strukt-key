@@ -8,12 +8,20 @@ class Signer{
 
 	private $keys;
 
+	/**
+	 * @param \Strukt\Contract\KeyPairInterface $keys
+	 */
 	public function __construct(KeyPairInterface $keys){
 
 		$this->keys = $keys;
 	}
 
-	public function create($data){
+	/**
+	 * @param string $data
+	 * 
+	 * @return mixed
+	 */
+	public function create(string $data):mixed{
 
 		$priKey = $this->keys->getPrivateKey()->getPem();
 
@@ -22,7 +30,14 @@ class Signer{
 		return $signature;
 	}
 
-	public static function verify($data, $signature, PublicKey $pubKey){
+	/**
+	 * @param string $data
+	 * @param string $signature
+	 * @param \Strukt\Ssl\PublicKey $pubKey
+	 * 
+	 * @return bool
+	 */
+	public static function verify(string $data, string $signature, PublicKey $pubKey):bool{
 
 		$pubKey = $pubKey->getPem();
 

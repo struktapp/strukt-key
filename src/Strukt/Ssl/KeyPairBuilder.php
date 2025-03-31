@@ -8,7 +8,11 @@ class KeyPairBuilder extends AbstractKeyPair{
 
 	protected $conf;
 
-	public function __construct(Config $conf = null, $pass = ""){
+	/**
+	 * @param ?\Strukt\Ssl\Config $conf
+	 * @param string $pass
+	 */
+	public function __construct(?Config $conf = null, string $pass = ""){
 
 		$this->conf = $conf;
 

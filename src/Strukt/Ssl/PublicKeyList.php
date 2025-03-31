@@ -6,23 +6,37 @@ class PublicKeyList{
 
 	private $keys;
 
-	public function __construct(Array $keyList){
+	/**
+	 * @param array $keyList
+	 */
+	public function __construct(array $keyList){
 
 		foreach($keyList as $key)
 			$this->addKey($key);
 	}
 
-	public static function make(Array $keyList = []){
+	/**
+	 * @param array $keyList = []
+	 * 
+	 * @return static
+	 */
+	public static function make(array $keyList = []):static{
 
 		return new self($keyList);
 	}
 
-	public function addKey($key){
+	/**
+	 * @param mixed $key
+	 */
+	public function addKey(mixed $key):void{
 
 		$this->keys[] = PublicKey::fromPem($key);
 	}
 
-	public function getKeys(){
+	/**
+	 * @return array
+	 */
+	public function getKeys():array{
 
 		foreach($this->keys as $key)
 			$pubKeys[] = $key->getResource();
@@ -30,7 +44,7 @@ class PublicKeyList{
 		return $pubKeys;
 	}
 
-	public function freeAll(){
+	public function freeAll():void{
 
 		// foreach($this->keys as $key)
 			// openssl_free_key($key->getResource());
