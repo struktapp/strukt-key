@@ -17,3 +17,6 @@ fixture/samweru
 fixture/samweru.pub
 cfg
 .phpunit.cache/
+strukt
+strukt.pub
+strukt_message

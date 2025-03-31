@@ -33,11 +33,7 @@ class KeyPairGenerate extends \Strukt\Console\Command{
 		if(empty($name))
 			throw new \Exception("Must enter a name!");
 			
-		if(!empty($pass))
-			$keyPair = new KeyPairBuilder();
-		else
-			$keyPair = new KeyPairBuilder(null, $pass);
-
+		$keyPair = !empty($pass)?new KeyPairBuilder(null, $pass):new KeyPairBuilder();
 		$privKey = $keyPair->getPrivateKey()->getPem();
 		$pubKey = $keyPair->getPublicKey()->getPem();
 

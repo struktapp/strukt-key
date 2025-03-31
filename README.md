@@ -56,7 +56,7 @@ $file = "file:///home/churchill/.ssh/id_rsa"
 $k = ssl($file)
 ```
 
-### Encrypt message with public key
+### Encrypt message with Public Key
 
 ```php
 $message = "Hi! My name is (what?)
