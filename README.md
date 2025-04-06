@@ -22,7 +22,7 @@ Create `composer.json` script with contents below then run `composer update`
 ### Bcrypt
 
 ```php
-$hash = bcry("p@55w0rd")->encode()
+$hash = bcry("p@55w0rd")->encode();
 $success = bcry("p@55w0rd")->verify($hash);
 ```
 
@@ -37,13 +37,13 @@ $hash = sha256dbl('p@55w0rd');
 ## Auto generate keys
 
 ```php
-// $k = Strukt\Ssl\All::makeKeys()
-$k = ssl()
-$k->getKeys()->getPrivateKey()->getPem()//get private key
-$k->getKeys()->getPublicKey()->getPem()//get public key
-$c = $k->useCipher()
-$enc = $c->encrypt("p@55w0rd")
-$dec = $c->decrypt($enc)
+// $k = Strukt\Ssl\All::makeKeys();
+$ks = ssl()->getKeys();
+$ks->getPrivateKey()->getPem();//get Private Key
+$ks->getPublicKey()->getPem();//get Public Key
+$c = $ks->useCipher();
+$enc = $c->encrypt("p@55w0rd");
+$dec = $c->decrypt($enc);
 ```
 
 ### Use existing key
@@ -53,7 +53,7 @@ You can generate your key via `ssh-keygen` if you wantta.
 ```php
 $file = "file:///home/churchill/.ssh/id_rsa"
 // $k = Strukt\Ssl\All::keyPath($file)
-$k = ssl($file)
+$k = ssl($file);
 ```
 
 ### Encrypt message with Public Key
@@ -70,8 +70,9 @@ Slim Shady";
 
 $file = "file:///home/churchill/.ssh/id_rsa.pub"
 
-$p = new Strukt\Ssl\KeyPair();//No private key
-$p->setPublicKey($file);
+// $p = new Strukt\Ssl\KeyPair();//No Private Key
+// $p->setPublicKey($file);
+$p = keypair()->setPublicKey($file); //No Private Key
 
 // $enc = Strukt\Ssl\All::useKeys($p)->toSend($message);
 $enc = ssl($p)->toSend($message);
@@ -80,8 +81,9 @@ $enc = ssl($p)->toSend($message);
 ### Encrypt with password
 
 ```php
-$p = new Strukt\Ssl\KeyPair($path, "p@55w0rd");
-$p->getPublicKey()//trigger public key extraction from private key
+// $p = new Strukt\Ssl\KeyPair($path, "p@55w0rd");
+// $p->getPublicKey(); // Trigger public key extraction from private key
+$p = keypair($path, "p@55w0rd")->getPublicKey();
 
 // $k = Strukt\Ssl\All::useKeys($p)
 $k = ssl($p);
@@ -100,3 +102,19 @@ $oCsr = ssl($kpath)->withCert($cpath);
 $cert = $oCsr->sign();
 $success = $oCsr->verify($cert);
 ```
+
+## Note
+
+For local keys in your project or project root. Example:
+
+```sh
+├── strukt     # Private Key
+└── strukt.pub # Public Key
+```
+You can use helper `local` to localize your path to url:
+
+```php
+$k = ssl(local("strukt"));
+// $p = keypair()->setPublicKey(local("strukt.pub"));
+```
+

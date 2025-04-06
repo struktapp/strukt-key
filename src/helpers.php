@@ -7,6 +7,10 @@ use Strukt\Csrf;
 use Strukt\Jwt;
 use Strukt\Ssl\Config;
 use Strukt\Ssl\All;
+use Strukt\Ssl\KeyPairBuilder;
+use Strukt\Ssl\KeyPair;
+use Strukt\Contract\KeyPairInterface;
+use Strukt\Fs;
 
 helper("key");
 
@@ -228,13 +232,17 @@ if(helper_add("ssl")){
 
 	/**
 	 * @param \Strukt\Ssl\Config|
-	 * 		  \Strukt\Ssl\All|
+	 * 		  \Strukt\Ssl\KeyPair|
 	 * 		  \Strukt\Contract\KeyPairInterface|
-	 * 		  \Strukt\Ssl\KeyPair|string|null $keysOrPathOrCfg
+	 * 		  \Strukt\Ssl\KeyPair|string|null $keysOrPathOrCfg - can be path
 	 * 
 	 * @return \Strukt\Ssl\All
 	 */
 	function ssl(KeyPair|KeyPairInterface|Config|string|null $keysOrPathOrCfg = null):All{
+
+		if(is_string($keysOrPathOrCfg))
+			if(Fs::isFile($keysOrPathOrCfg))
+				$keysOrPathOrCfg = local($keysOrPathOrCfg);
 
 		if($keysOrPathOrCfg instanceof KeyPair)
 			return All::useKeys($keysOrPathOrCfg);
@@ -250,5 +258,23 @@ if(helper_add("ssl")){
 
 		if(is_null($keysOrPathOrCfg))
 			return All::makeKeys();
+	}
+}
+
+if(helper_add("keypair")){
+
+	/**
+	 * @param mixed $keyOrPemFile = ""
+	 * @param string $pass = ""
+	 * 
+	 * @return \Strukt\Contract\KeyPairInterface
+	 */
+	function keypair(mixed $keyOrPemFile="", string $pass=""):KeyPairInterface{
+
+		if(Fs::isFile($keyOrPemFile))
+			$keyOrPemFile = local($keyOrPemFile);
+
+		return new KeyPair($keyOrPemFile, $pass);
+		
 	}
 }
