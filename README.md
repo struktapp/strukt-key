@@ -1,4 +1,4 @@
-Strukt-Key
+Strukt Key
 =====
 
 ## Installation
@@ -72,7 +72,9 @@ $file = "file:///home/churchill/.ssh/id_rsa.pub"
 
 // $p = new Strukt\Ssl\KeyPair();//No Private Key
 // $p->setPublicKey($file);
-$p = keypair()->setPublicKey($file); //No Private Key
+// $p = keypair()->setPublicKey($file); //No Private Key
+// $p = pubkey(local("strukt.pub")); //No Private Key
+$p = pubkey($file);
 
 // $enc = Strukt\Ssl\All::useKeys($p)->toSend($message);
 $enc = ssl($p)->toSend($message);
@@ -83,7 +85,8 @@ $enc = ssl($p)->toSend($message);
 ```php
 // $p = new Strukt\Ssl\KeyPair($path, "p@55w0rd");
 // $p->getPublicKey(); // Trigger public key extraction from private key
-$p = keypair($path, "p@55w0rd")->getPublicKey();
+$p = keypair($path, "p@55w0rd");
+$p->getPublicKey(); // Trigger public key extraction from private key
 
 // $k = Strukt\Ssl\All::useKeys($p)
 $k = ssl($p);

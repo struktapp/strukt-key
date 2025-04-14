@@ -131,6 +131,8 @@ if(helper_add("sha256dbl")){
 if(helper_add("csrf")){
 
 	/**
+	 * CSRF Token - Cross-domain Request Forgery Token
+	 * 
 	 * @param array|string $data
 	 * 
 	 * @return object
@@ -183,6 +185,8 @@ if(helper_add("csrf")){
 if(helper_add("jwt")){
 
 	/**
+	 * JWT Token - Json Web Token
+	 * 
 	 * @param array|string $data
 	 * 
 	 * @return string|object
@@ -276,5 +280,21 @@ if(helper_add("keypair")){
 
 		return new KeyPair($keyOrPemFile, $pass);
 		
+	}
+}
+
+if(helper_add("pubkey")){
+
+	/**
+	 * Returns Strukt\Ssl\KeyPair without a Private Key
+	 *  Alias for: $p = keypair()->setPublicKey($file);
+	 * 
+	 * @param string $path - local URL to Public Key
+	 * 
+	 * @return \Strukt\Contract\KeyPairInterface
+	 */
+	function pubkey(string $path):KeyPairInterface{
+
+		return keypair()->setPublicKey($path);
 	}
 }
