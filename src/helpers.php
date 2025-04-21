@@ -71,6 +71,9 @@ if(helper_add("bcry")){
 
 		return new class($hash_class, $password){
 
+			private $hash_class;
+			private $password;
+
 			/**
 			 * @param \Strukt\Hash\Bcrypt $hash_class
 			 * @param string $password
