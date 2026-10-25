@@ -7,9 +7,9 @@
         "php": ">=8.2",
         "ext-openssl": "*",
         "ext-json": "*",
-        "strukt/math": "dev-main",
-        "strukt/console": "dev-main",
-        "strukt/fs": "dev-main"
+        "strukt/math": "v1.0.0",
+        "strukt/console": "v2.0.0",
+        "strukt/fs": "v2.0.0"
     },
     "require-dev": {
         "pestphp/pest": "^4.0"
@@ -27,58 +27,6 @@
             "Tests\\": "tests/"
         }
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../../strukt4/math",
-            "options": {
-                "symlink": false,
-                "versions": {
-                    "strukt/math": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../../strukt4/base",
-            "options": {
-                "symlink": false,
-                "versions": {
-                    "strukt/base": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../../strukt4/commons",
-            "options": {
-                "symlink": false,
-                "versions": {
-                    "strukt/commons": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../../strukt4/console",
-            "options": {
-                "symlink": false,
-                "versions": {
-                    "strukt/console": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../../strukt4/fs",
-            "options": {
-                "symlink": false,
-                "versions": {
-                    "strukt/fs": "dev-main"
-                }
-            }
-        }
-    ],
     "bin": [
         "bin/kcli"
     ],
@@ -100,5 +48,6 @@
             "name": "pitsolu",
             "email": "pitsolu@gmail.com"
         }
-    ]
+    ],
+    "version": "1.0.0"
 }
